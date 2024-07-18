@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  node:
+    container_name: dune-bot-node
+    build: ./docker/node
+    env_file:
+      - .env
+    networks:
+      - dune-bot
+    volumes:
+      - ./app/:/usr/src/app
+    command: ["sh", "-c", "docker-start ; pm2-runtime start /usr/src/app/server.js"]
+
+networks:
+  dune-bot:
