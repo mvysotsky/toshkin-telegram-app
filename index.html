@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Landing Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Game is soon</h1>
+            <p>Очки: 1000</p>
+            <p>Никнейм: Player1</p>
+        </div>
+        <div class="referral">
+            <button onclick="copyReferralLink()">PreSale Now Redirect</button>
+        </div>
+        <div class="buttons">
+            <button onclick="showPage('tasks')">Задания</button>
+            <button onclick="showPage('shop')">Магазин</button>
+            <button onclick="showPage('character')">Персонаж</button>
+            <button onclick="showPage('rating')">Рейтинг</button>
+        </div>
+        <div id="message" class="message"></div>
+        <div id="tasks" class="content">
+            <h2>Список заданий:</h2>
+            <ul>
+                <li>Задание 1: Победить 10 монстров</li>
+                <li>Задание 2: Собрать 100 монет</li>
+                <li>Задание 3: Достигнуть 5 уровня</li>
+            </ul>
+        </div>
+        <div id="rating" class="content">
+            <h2>Рейтинг игроков</h2>
+            <table>
+                <tr><th>Никнейм</th><th>Очки</th></tr>
+                <tr><td>Player8</td><td>967</td></tr>
+                <tr><td>Player3</td><td>856</td></tr>
+                <tr><td>Player2</td><td>789</td></tr>
+                <tr><td>Player9</td><td>738</td></tr>
+                <tr><td>Player1</td><td>540</td></tr>
+                <tr><td>Player7</td><td>430</td></tr>
+                <tr><td>Player10</td><td>362</td></tr>
+                <tr><td>Player4</td><td>169</td></tr>
+                <tr><td>Player5</td><td>87</td></tr>
+                <tr><td>Player6</td><td>26</td></tr>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
