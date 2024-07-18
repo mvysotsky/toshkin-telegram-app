@@ -1,5 +1,4 @@
-# Toshkin Telegram Mini App
-Toshkin Telegram Bot
+# Toshkin Telegram App
 
 To start the application:
 1. `cp dev/example.env .env`
