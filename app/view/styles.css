@@ -53,6 +53,10 @@ div.launch-button {
     font-size: 24px;
 }
 
+.launch-button span {
+    white-space: nowrap;
+}
+
 .footer-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
