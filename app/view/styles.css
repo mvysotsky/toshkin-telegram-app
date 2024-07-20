@@ -102,3 +102,70 @@ div.launch-button {
 .profile icon {
     background: url('img/profile.png') transparent 0 / cover no-repeat;
 }
+
+div.rating-table {
+    width: 100%;
+    padding: 32px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    border-radius: 24px;
+    border: 4px solid #2C0048;
+    background: #550196;
+
+    margin-top: auto;
+}
+
+div.rating-table-header {
+    display: flex;
+    width: auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+div.stars-display {
+    width: 79px;
+    height: 28px;
+    background: url('img/stars.png') transparent -1.068px -24.769px / 100% 284.615% no-repeat;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+div.rating-table-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+}
+
+div.rating-table-row {
+    display: flex;
+    width: 100%;
+    padding: 8px 16px;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.30);
+}
+
+.rating-table-cell:nth-child(2) {
+    margin-right: auto;
+    margin-left: 10px;
+}
+.rating-table-cell:nth-child(1) {
+    color: rgba(255, 255, 255, 0.50);
+}
+
+.spinner {
+    width: 150px; /* Adjust as needed */
+    height: 150px; /* Adjust as needed */
+    background-image: url('img/spinner.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 80px auto;
+}
