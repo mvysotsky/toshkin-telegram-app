@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const targetDate = new Date("2024-07-22");
-    const countdownElement = document.querySelector(".launch-button span");
+    const countdownElement = document.querySelector(".launch-button h2");
 
     const updateCountdown = () => {
         const now = new Date();
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         minutes = minutes < 10 ? '0' + minutes : minutes;
         seconds = seconds < 10 ? '0' + seconds : seconds;
 
-        // Update the span content
+        // Update the text content
         countdownElement.textContent = `Launch to the Moon in ${hours}:${minutes}:${seconds}`;
     };
 
