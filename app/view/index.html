@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--suppress HtmlUnknownTag -->
+<!--suppress HtmlUnknownTag, HtmlUnknownAttribute -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,21 +7,39 @@
     <title>Telegram App Page</title>
     <script src="script.js"></script>
     <link rel="stylesheet" href="styles.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+          rel="stylesheet">
 </head>
 <body>
 
 <div class="app-content">
 
-    <div class="rating-table" style="display: none">
-        <div class="rating-table-header">
+    <div class="view rating-table" style="display: none">
+        <div class="flex-column rating-table-header">
             <div class="stars-display"></div>
             <h1>Rating Table</h1>
         </div>
 
         <div class="rating-table-body"></div>
+    </div>
+
+    <div class="view profile-box">
+        <div class="flex-column profile-header">
+            <div class="stars-display"></div>
+            <h1>Your Score</h1>
+            <span>178</span>
+        </div>
+        <p>
+            Share your SOL Wallet Address to participate in Airdrop
+        </p>
+        <input type="text" placeholder="Please enter wallet address"/>
     </div>
 
 

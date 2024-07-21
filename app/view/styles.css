@@ -5,7 +5,7 @@
     --red-grad: linear-gradient(180deg, #790014 -77.21%, #DF0024 100%);
 }
 
-* {
+*, *::before, *::after {
     box-sizing: border-box;
 }
 
@@ -25,6 +25,68 @@ body {
     font-style: normal;
     font-weight: 400;
     line-height: 100%;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+input[type="text"] {
+    height: 54px;
+    border-radius: 8px;
+    border: 1px solid #FFF;
+    width: 100%;
+    background: transparent;
+    color: #FFF;
+    text-align: center;
+
+    font-family: "Poppins", sans-serif;
+    -webkit-text-stroke-width: initial;
+
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; /* 16px */
+}
+
+input::placeholder {
+    color: #FFF;
+    font-weight: 400;
+    opacity: 0.5;
+}
+
+input[type="text"]:focus {
+    border: 2px solid darkgray;
+    outline: none;
+}
+
+p {
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    -webkit-text-stroke-width: initial;
+    font-weight: 200;
+    font-style: normal;
+
+}
+
+div.flex-column {
+    display: flex;
+    width: auto;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.view {
+    width: 100%;
+    padding: 32px;
+    flex-direction: column;
+    align-items: center;
+
+    border-radius: 24px;
+    border: 4px solid #2C0048;
+    background: #550196;
+
+    margin-top: auto;
 }
 
 div.app-content {
@@ -107,36 +169,39 @@ div.launch-button {
     background: url('img/profile.png') transparent 0 / cover no-repeat;
 }
 
+
 div.rating-table {
-    width: 100%;
-    padding: 32px;
-    flex-direction: column;
-    align-items: center;
     gap: 16px;
-
-    border-radius: 24px;
-    border: 4px solid #2C0048;
-    background: #550196;
-
-    margin-top: auto;
 }
 
 div.rating-table-header {
-    display: flex;
-    width: auto;
-    flex-direction: column;
-    align-items: center;
     gap: 8px;
+}
+
+div.profile-box {
+    gap: 32px;
+}
+
+div.profile-header .stars-display {
+    width: 163px;
+    height: 57px;
+    background: url('img/stars.png') transparent -2.203px -50.423px / 100% 284.615% no-repeat;
+}
+
+div.profile-header span {
+    color: #F9C900;
+    text-align: center;
+    font-family: "Poetsen One", sans-serif;
+    font-size: 104px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 100%; /* 104px */
 }
 
 div.stars-display {
     width: 79px;
     height: 28px;
     background: url('img/stars.png') transparent -1.068px -24.769px / 100% 284.615% no-repeat;
-}
-
-h1 {
-    font-size: 32px;
 }
 
 div.rating-table-body {
@@ -160,6 +225,7 @@ div.rating-table-row {
     margin-right: auto;
     margin-left: 10px;
 }
+
 .rating-table-cell:nth-child(1) {
     color: rgba(255, 255, 255, 0.50);
 }
