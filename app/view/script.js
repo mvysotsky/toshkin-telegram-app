@@ -29,6 +29,13 @@ document.addEventListener("DOMContentLoaded", function () {
     updateCountdown();
     const intervalId = setInterval(updateCountdown, 1000);
 
+    function hideAllViews() {
+        const views = document.querySelectorAll('.view');
+        views.forEach(view => {
+            view.style.display = 'none';
+        });
+    }
+
     // Add a click event listener to the button
     document.querySelector(".launch-button").addEventListener("click", function () {
         window.location.href = "https://www.pinksale.finance/solana/launchpad/2Lwyqnu6QiFshC79WdQJc4R7CK3AtVMfHPZCgP4oSH6x";
@@ -36,12 +43,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // TapZone button click event listener
     document.querySelector('.menu-button.tap-zone').addEventListener('click', function () {
-        const ratingTable = document.querySelector('.rating-table');
-        ratingTable.style.display = 'none';
+        hideAllViews();
+    });
+
+    // TapZone button click event listener
+    document.querySelector('.menu-button.profile').addEventListener('click', function () {
+        hideAllViews();
+
+        const profileName = document.querySelector('.profile-name');
+        profileName.style.display = 'flex';
+
+        const profileView = document.querySelector('.profile-box');
+        profileView.style.display = 'flex';
+
     });
 
     // Contest button logic
     document.querySelector('.menu-button.contest').addEventListener('click', function () {
+        hideAllViews();
+
         const ratingTable = document.querySelector('.rating-table');
         const ratingTableBody = document.querySelector('.rating-table-body');
 

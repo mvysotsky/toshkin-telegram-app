@@ -243,6 +243,8 @@ div.rating-table-row {
     border-radius: 56px;
     padding: 0 32px;
     width: fit-content;
+    height: 44px;
+    justify-content: center;
 }
 
 .profile-box {
