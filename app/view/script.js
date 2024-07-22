@@ -25,9 +25,10 @@ document.addEventListener("DOMContentLoaded", function () {
         countdownElement.textContent = `Launch to the Moon in ${hours}:${minutes}:${seconds}`;
     };
 
+    const intervalId = setInterval(updateCountdown, 1000);
+
     // Update the countdown every second
     updateCountdown();
-    const intervalId = setInterval(updateCountdown, 1000);
 
     function hideAllViews() {
         const views = document.querySelectorAll('.view');
