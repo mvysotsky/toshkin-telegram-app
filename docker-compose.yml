@@ -2,16 +2,32 @@ version: '3'
 
 services:
 
-  node:
-    container_name: dune-bot-node
-    build: ./docker/node
+  db:
+    container_name: toshkin-bot-db
+    build:
+        context: ./docker/database
+        dockerfile: Dockerfile
+    ports:
+      - "3308:3306"
     env_file:
       - .env
     networks:
-      - dune-bot
+      - toshkin-bot
+    volumes:
+      - ./docker/database/dbdata:/var/lib/mysql
+
+  node:
+    container_name: toshkin-bot-node
+    build: ./docker/node
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - toshkin-bot
     volumes:
       - ./app/:/usr/src/app
     command: ["sh", "-c", "docker-start ; pm2-runtime start /usr/src/app/server.js"]
 
 networks:
-  dune-bot:
+  toshkin-bot:

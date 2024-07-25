@@ -1,25 +1,15 @@
+// server.js
+const express = require('express');
+const path = require('path');
+const bot = require('./bot'); // Import the bot instance
 
-const { Telegraf, Markup } = require('telegraf')
-const { message } = require('telegraf/filters')
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const bot = new Telegraf(process.env.BOT_TOKEN)
+// Serve static files from the 'app/view' directory
+app.use(express.static(path.join(__dirname, 'view')));
 
-bot.start((ctx) => {
-    ctx.reply('Welcome RUSLAN!', Markup.inlineKeyboard([
-        Markup.button.url('Open Mini App', 'https://url_to_open.com'),
-    ]));
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
-
-
-
-
-
-
-bot.help((ctx) => ctx.reply('Send me a sticker'))
-bot.on(message('sticker'), (ctx) => ctx.reply('👍'))
-bot.hears('hi', (ctx) => ctx.reply('Hey there'))
-bot.launch()
-
-// Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))

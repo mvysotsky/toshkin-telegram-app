@@ -1,12 +1,12 @@
-FROM mysql:8.0
+FROM mysql:8.4
 
-ENV MYSQL_DATABASE="dunebot"
-ENV MYSQL_ROOT_PASSWORD="dune-bot-root"
-ENV MYSQL_USER="dune-bot"
+ENV MYSQL_DATABASE="toshkin"
+ENV MYSQL_ROOT_PASSWORD="toshkin-root"
+ENV MYSQL_USER="toshkin"
 ENV MYSQL_PASSWORD="devdbaccess"
 
 # DB data backup, unpucks itself automaticly (https://docs.docker.com/engine/reference/builder/#add)
-#ADD docker-entrypoint-initdb.d.tar.xz /
+ADD entrypoint/* docker-entrypoint-initdb.d/
 
 # Timezone settings
 ENV TZ=Europe/Kyiv
