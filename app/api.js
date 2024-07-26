@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const knex = require('knex')({
-    client: 'mysql',
+    client: 'mysql2',
     connection: {
         host: process.env.DATABASE_HOST || 'db',
         port: process.env.DATABASE_PORT || 3306,
-        user: process.env.MYSQL_USER,
-        password: process.env.MYSQL_PASSWORD,
-        database: process.env.MYSQL_DATABASE,
+        user: 'root',
+        password: process.env.MYSQL_ROOT_PASSWORD,
+        database: process.env.MYSQL_DATABASE || 'toshkin',
     }
 });
 
@@ -22,13 +22,17 @@ router.post('/click', async (req, res) => {
         if (user) {
             // Increment the user's score in the leaderboard table by 1
             await knex('leaderboard')
-                .where({ username })
+                .where({ user_id: user.id })
                 .increment('score', 1);
-
-            res.send(`Score updated for username: ${username}`);
         } else {
-            res.status(404).send('User not found');
+            // Create a new user in the users table
+            const [userID] = await knex('users').insert({ username });
+
+            // Create a new record in the leaderboard table
+            await knex('leaderboard').insert({ user_id: userID, score: 1 });
         }
+
+        res.status(200).send('Score updated');
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');

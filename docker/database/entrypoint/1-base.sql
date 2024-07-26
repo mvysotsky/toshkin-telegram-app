@@ -9,7 +9,7 @@ CREATE TABLE `toshkin`.`users`
     UNIQUE INDEX `username` (`username`)
 );
 
-CREATE TABLE `toshkin`.`leadeboard`
+CREATE TABLE `toshkin`.`leaderboard`
 (
     `id`         INT(11)   NOT NULL AUTO_INCREMENT,
     `user_id`    INT(11)   NOT NULL,
