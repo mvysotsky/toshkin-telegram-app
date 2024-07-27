@@ -271,8 +271,29 @@ div.rating-table-row {
 }
 
 div.tap-zone {
-    width: 80%;
-    height: 50%;
-    margin: auto;
-    background-color: cadetblue;
+    width: 93%;
+    height: 38%;
+    margin: 70% auto 0 auto;
+    border-radius: 50%;
+    background-color: transparent;
+    position: relative;
+    border: 0;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.tap-zone .icon {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: url('img/plus-icon.png') no-repeat center center;
+    background-size: contain;
+    animation: fadeOut 2s forwards;
 }

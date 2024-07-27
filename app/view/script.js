@@ -95,7 +95,50 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1000);
     });
 
-    document.querySelector('div.tap-zone').addEventListener('click', () => {
+    /**
+     * Check if the position fits the target
+     * @param {HTMLElement} targetElement - The target element to check against.
+     * @param {number} centerX - The X coordinate of the center of the icon.
+     * @param {number} centerY - The Y coordinate of the center of the icon.
+     * @returns {boolean} - Returns true if the position fits within the target element, otherwise false.
+     */
+    const checkIfPositionFits = (targetElement, centerX, centerY) => {
+        // Calculate the center of the targetElement
+        const targetCenterX = targetElement.clientWidth / 2;
+        const targetCenterY = targetElement.clientHeight / 2;
+
+        // Calculate the radius of the targetElement
+        const tapZoneRadius = targetElement.clientWidth / 2; // Assuming the targetElement is a circle
+
+        // Calculate the distance from the center of the icon to the center of the targetElement
+        const distance =
+            Math.sqrt(Math.pow(centerX - targetCenterX, 2) + Math.pow(centerY - targetCenterY, 2));
+
+        // Check if the icon is within the targetElement
+        return distance + 12 <= tapZoneRadius; // 12 is half the width/height of the icon
+    }
+
+    /**
+     * Get a random position for the icon within the parent target
+     * @param {HTMLElement} parentTarget - The parent target element.
+     * @param {number} iconWidth - The width of the icon.
+     * @returns {[number, number]} - Returns an array with the X and Y coordinates of the icon.
+     */
+    const getRandomIconPosition = (parentTarget, iconWidth) => {
+        const randomX = Math.random() * (parentTarget.clientWidth - iconWidth);
+        const randomY = Math.random() * (parentTarget.clientHeight - iconWidth);
+        const iconRadius = iconWidth / 2;
+
+        // Check if the position fits the target
+        if (!checkIfPositionFits(parentTarget, randomX - iconRadius, randomY - iconRadius)) {
+            // Icon outside the target area, recalculating position
+            return getRandomIconPosition(parentTarget, iconWidth);
+        }
+
+        return [randomX, randomY];
+    }
+
+    document.querySelector('div.tap-zone').addEventListener('click', (event) => {
         const username = 'your-username'; // TODO: Replace with the actual username
         console.log('Clicked on the tap zone!');
 
@@ -104,14 +147,30 @@ document.addEventListener("DOMContentLoaded", function () {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username: username })
+            body: JSON.stringify({username: username})
         })
-            .then(response => console.log(response))
-            .then(data => {
-                console.log('Success:', data);
-            })
+            .then()
             .catch((error) => {
                 console.error('Error:', error);
             });
+
+        /** @type {HTMLElement} */
+        const tapZone = event.currentTarget;
+        const icon = document.createElement('div');
+        icon.classList.add('icon');
+
+        const [randomX, randomY] = getRandomIconPosition(tapZone, 24);
+
+        icon.style.left = `${randomX}px`;
+        icon.style.top = `${randomY}px`;
+
+        tapZone.appendChild(icon);
+
+        // Remove the icon after the animation ends
+        icon.addEventListener('animationend', () => {
+            icon.remove();
+        });
     });
+
+
 });
