@@ -1,3 +1,5 @@
+const username = 'your-username'; // TODO: Replace with the actual username
+
 document.addEventListener("DOMContentLoaded", function () {
     const targetDate = new Date("2024-07-22");
     const countdownElement = document.querySelector(".launch-button h2");
@@ -57,6 +59,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const profileView = document.querySelector('.profile-box');
         profileView.style.display = 'flex';
+
+        // Update span.user-score with the user's score from
+        // the API endpoint /api/profile?username={username}
+        fetch(`/api/profile?username=${username}`)
+            .then((response) => response.json())
+            .then((data) => {
+                const userScore = document.querySelector('#user-score');
+                userScore.textContent = data.score;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            }
+        );
 
     });
 
@@ -139,7 +154,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
-        const username = 'your-username'; // TODO: Replace with the actual username
         console.log('Clicked on the tap zone!');
 
         fetch('/api/click', {
@@ -171,6 +185,5 @@ document.addEventListener("DOMContentLoaded", function () {
             icon.remove();
         });
     });
-
 
 });
