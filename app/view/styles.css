@@ -175,7 +175,7 @@ div.update-address-button {
     flex-shrink: 0;
 }
 
-.tap-zone icon {
+.tap-zone-btn icon {
     background: url('img/tapzone.png') transparent 0 / cover no-repeat;
 }
 
@@ -268,4 +268,11 @@ div.rating-table-row {
     background-repeat: no-repeat;
     background-size: cover;
     margin: 80px auto;
+}
+
+div.tap-zone {
+    width: 80%;
+    height: 50%;
+    margin: auto;
+    background-color: cadetblue;
 }

@@ -43,8 +43,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // TapZone button click event listener
-    document.querySelector('.menu-button.tap-zone').addEventListener('click', function () {
+    document.querySelector('.menu-button.tap-zone-btn').addEventListener('click', function () {
         hideAllViews();
+        document.querySelector('.tap-zone').style.display = 'flex';
     });
 
     // TapZone button click event listener
@@ -92,5 +93,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 ratingTableBody.appendChild(newRow);
             }
         }, 1000);
+    });
+
+    document.querySelector('div.tap-zone').addEventListener('click', () => {
+        const username = 'your-username'; // TODO: Replace with the actual username
+        console.log('Clicked on the tap zone!');
+
+        fetch('/api/click', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: username })
+        })
+            .then(response => console.log(response))
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     });
 });
