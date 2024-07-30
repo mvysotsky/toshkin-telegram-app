@@ -64,4 +64,26 @@ router.get('/profile', async (req, res) => {
     }
 });
 
+// API route to handle GET /api/leaderboard
+router.get('/leaderboard', async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    try {
+        // Get the top positions from the leaderboard table sorted by score in descending order
+        const leaderboard = await knex('leaderboard')
+            .join('users', 'leaderboard.user_id', 'users.id')
+            .select('users.username', 'leaderboard.score')
+            .orderBy('leaderboard.score', 'desc')
+            .limit(limit)
+            .offset(offset);
+
+        res.status(200).json(leaderboard);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 module.exports = router;
