@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    // Contest button logic
+    // Contest button logic (leaderboard)
     document.querySelector('.menu-button.contest').addEventListener('click', function () {
         hideAllViews();
 
@@ -88,26 +88,29 @@ document.addEventListener("DOMContentLoaded", function () {
         // Show loading spinner
         ratingTableBody.innerHTML = '<div class="spinner"></div>';
 
-        setTimeout(() => {
-            // Remove spinner after 2 seconds
-            ratingTableBody.innerHTML = '';
+        // Fetch leaderboard data
+        fetch('/api/leaderboard')
+            .then(response => response.json())
+            .then(data => {
+                // Remove spinner
+                ratingTableBody.innerHTML = '';
 
-            // Add 10 new rows with random data
-            for (let i = 0; i < 10; i++) {
-                const player = `Player ${Math.floor(Math.random() * 100)}`; // Example player name
-                const score = Math.floor(Math.random() * 1000); // Example score
-
-                const newRow = document.createElement('div');
-                newRow.classList.add('rating-table-row');
-                newRow.innerHTML = `
-                <div class="rating-table-cell">${i + 1}</div>
-                <div class="rating-table-cell">${player}</div>
-                <div class="rating-table-cell">${score}</div>
-            `;
-
-                ratingTableBody.appendChild(newRow);
-            }
-        }, 1000);
+                // Add rows with leaderboard data
+                data.forEach((item, index) => {
+                    const newRow = document.createElement('div');
+                    newRow.classList.add('rating-table-row');
+                    newRow.innerHTML = `
+                    <div class="rating-table-cell">${index + 1}</div>
+                    <div class="rating-table-cell">${item.username}</div>
+                    <div class="rating-table-cell">${item.score}</div>
+                `;
+                    ratingTableBody.appendChild(newRow);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                ratingTableBody.innerHTML = '<div class="error">Failed to load leaderboard</div>';
+            });
     });
 
     /**
