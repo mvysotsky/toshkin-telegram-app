@@ -102,9 +102,11 @@ div.app-content {
     align-items: center;
 }
 
-div.launch-button {
+div.launch-button,
+div.referral-button {
     margin-top: auto;
     display: flex;
+    box-sizing: border-box;
     width: 100%;
     height: 68px;
     padding: 16px 10px;
@@ -119,6 +121,16 @@ div.launch-button {
     box-shadow: 0 7px 0 0 #3C0009;
 
     font-size: 24px;
+    line-height: 1.1;
+
+    transition: 0.05s linear 0s;
+}
+
+div.launch-button:active,
+div.referral-button:active {
+    box-shadow: 0 7px 0 0 var(--red-grad-rev);
+    border-color: transparent;
+    border-bottom: none;
 }
 
 div.update-address-button {
@@ -152,6 +164,7 @@ div.update-address-button {
 
 .menu-button {
     display: flex;
+    box-sizing: border-box;
     padding: 10px 10px;
     flex-direction: column;
     align-items: center;
@@ -163,6 +176,14 @@ div.update-address-button {
     border: 4px solid var(--purp-grad-rev);
     background: var(--purp-grad);
     box-shadow: 0 7px 0 0 #2C0256;
+
+    transition: 0.05s linear 0s;
+}
+.menu-button:active {
+    box-shadow: 0 7px 0 0 var(--purp-grad-rev);
+    border-color: transparent;
+    border-bottom: none;
+    padding-top: 14px;
 }
 
 .menu-button span {
@@ -280,6 +301,16 @@ div.tap-zone {
     border: 0;
 }
 
+.tap-score {
+    border-radius: 56px;
+    padding: 0 32px;
+    width: fit-content;
+    height: 44px;
+    justify-content: center;
+    position: absolute;
+    top: 5vh;
+}
+
 @keyframes fadeOut {
     from {
         opacity: 1;
@@ -291,9 +322,29 @@ div.tap-zone {
 
 .tap-zone .icon {
     position: absolute;
-    width: 24px;
-    height: 24px;
+    width: 40px;
+    height: 40px;
     background: url('img/plus-icon.png') no-repeat center center;
     background-size: contain;
-    animation: fadeOut 2s forwards;
+    animation: fadeOut 2s forwards 0.1s;
+}
+
+.tap-zone .icon.icon-1 {
+    background-image: url('img/paw1.png');
+    background-size: contain;
+}
+
+.tap-zone .icon.icon-2 {
+    background-image: url('img/paw2.png');
+    background-size: contain;
+}
+
+.tap-zone .icon.icon-3 {
+    background-image: url('img/paw3.png');
+    background-size: contain;
+}
+
+.tap-zone .icon.icon-4 {
+    background-image: url('img/paw4.png');
+    background-size: contain;
 }

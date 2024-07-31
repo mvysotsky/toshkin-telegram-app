@@ -44,10 +44,21 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "https://www.pinksale.finance/solana/launchpad/2Lwyqnu6QiFshC79WdQJc4R7CK3AtVMfHPZCgP4oSH6x";
     });
 
+    // Add a click event listener to the referral button
+    document.querySelector(".referral-button").addEventListener("click", function (e) {
+        navigator.clipboard.writeText(`https://t.me/TOSHKIN_COIN_bot/start?startapp=${username}`);
+        setTimeout(() => {
+            e.target.innerHTML = "Copied! Share with Toshkiners!";
+        }, 200);
+    });
+
     // TapZone button click event listener
     document.querySelector('.menu-button.tap-zone-btn').addEventListener('click', function () {
         hideAllViews();
         document.querySelector('.tap-zone').style.display = 'flex';
+        document.querySelector('.tap-score').style.display = 'flex';
+        document.querySelector('.launch-button').style.display = 'flex';
+        document.querySelector('.referral-button').style.display = 'none';
     });
 
     // TapZone button click event listener
@@ -60,6 +71,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const profileView = document.querySelector('.profile-box');
         profileView.style.display = 'flex';
 
+        const launchButton = document.querySelector('.launch-button');
+        launchButton.style.display = 'none';
+
+        const referralButton = document.querySelector('.referral-button');
+        referralButton.style.display = 'flex';
+
         // Update span.user-score with the user's score from
         // the API endpoint /api/profile?username={username}
         fetch(`/api/profile?username=${username}`)
@@ -69,9 +86,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 userScore.textContent = data.score;
             })
             .catch((error) => {
-                console.error('Error:', error);
-            }
-        );
+                    console.error('Error:', error);
+                }
+            );
 
     });
 
@@ -81,6 +98,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const ratingTable = document.querySelector('.rating-table');
         const ratingTableBody = document.querySelector('.rating-table-body');
+        const launchButton = document.querySelector('.launch-button');
+        const referralButton = document.querySelector('.referral-button');
+
+        // Toggle visibility of the referral button
+        referralButton.style.display = 'none';
+
+        // Toggle visibility of the launch button
+        launchButton.style.display = 'flex';
 
         // Toggle visibility of the rating table
         ratingTable.style.display = 'flex';
@@ -156,8 +181,11 @@ document.addEventListener("DOMContentLoaded", function () {
         return [randomX, randomY];
     }
 
+    let score = 0;
+
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
         console.log('Clicked on the tap zone!');
+        document.querySelector('[data-score]').innerHTML = ++score;
 
         fetch('/api/click', {
             method: 'POST',
@@ -174,7 +202,10 @@ document.addEventListener("DOMContentLoaded", function () {
         /** @type {HTMLElement} */
         const tapZone = event.currentTarget;
         const icon = document.createElement('div');
+        const randomIndex = Math.floor(Math.random() * 4) + 1;
         icon.classList.add('icon');
+        icon.classList.add(`icon-${randomIndex}`);
+        icon.style.transform = `rotate(${Math.floor(Math.random() * (30 + 30) + 1) - 30}deg)`;
 
         const [randomX, randomY] = getRandomIconPosition(tapZone, 24);
 
