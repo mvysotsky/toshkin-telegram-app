@@ -320,6 +320,31 @@ div.tap-zone {
     }
 }
 
+@keyframes fadeOutCircle {
+    from {
+        opacity: 1;
+        width: 30px;
+        height: 30px;
+    }
+    to {
+        opacity: 0;
+        width: 100px;
+        height: 100px;
+    }
+}
+
+.tap-effect {
+    position: absolute;
+    z-index: -1;
+    width: 40px;
+    height: 40px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid #cdcdcd;
+    box-shadow: 0px 0px 3px 3px #cdcdcd;
+    animation: fadeOutCircle 1s forwards 0s;
+}
+
 .tap-zone .icon {
     position: absolute;
     width: 40px;

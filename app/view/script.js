@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
         launchButton.style.display = 'none';
 
         const referralButton = document.querySelector('.referral-button');
+        referralButton.innerHTML = 'Copy referral link';
         referralButton.style.display = 'flex';
 
         // Update span.user-score with the user's score from
@@ -202,7 +203,12 @@ document.addEventListener("DOMContentLoaded", function () {
         /** @type {HTMLElement} */
         const tapZone = event.currentTarget;
         const icon = document.createElement('div');
+        const tapEffect = document.createElement('div');
         const randomIndex = Math.floor(Math.random() * 4) + 1;
+
+        tapEffect.classList.add('tap-effect');
+        tapEffect.style.left = `${event.clientX}px`;
+        tapEffect.style.top = `${event.clientY}px`;
         icon.classList.add('icon');
         icon.classList.add(`icon-${randomIndex}`);
         icon.style.transform = `rotate(${Math.floor(Math.random() * (30 + 30) + 1) - 30}deg)`;
@@ -213,10 +219,12 @@ document.addEventListener("DOMContentLoaded", function () {
         icon.style.top = `${randomY}px`;
 
         tapZone.appendChild(icon);
+        document.querySelector('body').appendChild(tapEffect);
 
         // Remove the icon after the animation ends
         icon.addEventListener('animationend', () => {
             icon.remove();
+            tapEffect.remove();
         });
     });
 
