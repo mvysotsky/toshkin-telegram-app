@@ -1,10 +1,75 @@
 const app = window.Telegram.WebApp;
 
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
+let userscore = 0;
 
-document.addEventListener("DOMContentLoaded", function () {
+/**
+ * Check if the position fits the target
+ * @param {HTMLElement} targetElement - The target element to check against.
+ * @param {number} centerX - The X coordinate of the center of the icon.
+ * @param {number} centerY - The Y coordinate of the center of the icon.
+ * @returns {boolean} - Returns true if the position fits within the target element, otherwise false.
+ */
+const checkIfPositionFits = (targetElement, centerX, centerY) => {
+    // Calculate the center of the targetElement
+    const targetCenterX = targetElement.clientWidth / 2;
+    const targetCenterY = targetElement.clientHeight / 2;
+
+    // Calculate the radius of the targetElement
+    const tapZoneRadius = targetElement.clientWidth / 2; // Assuming the targetElement is a circle
+
+    // Calculate the distance from the center of the icon to the center of the targetElement
+    const distance =
+        Math.sqrt(Math.pow(centerX - targetCenterX, 2) + Math.pow(centerY - targetCenterY, 2));
+
+    // Check if the icon is within the targetElement
+    return distance + 12 <= tapZoneRadius; // 12 is half the width/height of the icon
+}
+
+/**
+ * Get a random position for the icon within the parent target
+ * @param {HTMLElement} parentTarget - The parent target element.
+ * @param {number} iconWidth - The width of the icon.
+ * @returns {[number, number]} - Returns an array with the X and Y coordinates of the icon.
+ */
+const getRandomIconPosition = (parentTarget, iconWidth) => {
+    const randomX = Math.random() * (parentTarget.clientWidth - iconWidth);
+    const randomY = Math.random() * (parentTarget.clientHeight - iconWidth);
+    const iconRadius = iconWidth / 2;
+
+    // Check if the position fits the target
+    if (!checkIfPositionFits(parentTarget, randomX - iconRadius, randomY - iconRadius)) {
+        // Icon outside the target area, recalculating position
+        return getRandomIconPosition(parentTarget, iconWidth);
+    }
+
+    return [randomX, randomY];
+}
+
+// Function to update all elements with data-score attribute
+function updateAllScores() {
+    document.querySelectorAll('[data-score]').forEach(element => {
+        element.innerHTML = userscore;
+    });
+}
+
+const updateProfile = async (username) => {
+    try {
+        const response = await fetch(`/api/profile?username=${username}`);
+        const data = await response.json();
+        userscore = data.score;
+        updateAllScores();
+    } catch (e) {
+        console.error('Error:', e);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
     // set #username element text to the username
     document.querySelector('#username').textContent = username;
+
+    // Fetch profile to set correct user score
+    await updateProfile(username);
 
     // Expand Telegram view to fullscreen
     app.ready();
@@ -48,12 +113,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Add a click event listener to the button
+    // Launch to the Moon button click event listener
     document.querySelector(".launch-button").addEventListener("click", function () {
         window.location.href = "https://www.pinksale.finance/solana/launchpad/2Lwyqnu6QiFshC79WdQJc4R7CK3AtVMfHPZCgP4oSH6x";
     });
 
-    // Add a click event listener to the referral button
+    // Referral button click event listener
     document.querySelector(".referral-button").addEventListener("click", function (e) {
         navigator.clipboard.writeText(`https://t.me/TOSHKIN_COIN_bot/start?startapp=${username}`);
         setTimeout(() => {
@@ -70,9 +135,10 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector('.referral-button').style.display = 'none';
     });
 
-    // TapZone button click event listener
-    document.querySelector('.menu-button.profile').addEventListener('click', function () {
+    // Profile button click event listener
+    document.querySelector('.menu-button.profile').addEventListener('click', async function () {
         hideAllViews();
+        await updateProfile(username);
 
         const profileName = document.querySelector('.profile-name');
         profileName.style.display = 'flex';
@@ -86,20 +152,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const referralButton = document.querySelector('.referral-button');
         referralButton.innerHTML = 'Copy referral link';
         referralButton.style.display = 'flex';
-
-        // Update span.user-score with the user's score from
-        // the API endpoint /api/profile?username={username}
-        fetch(`/api/profile?username=${username}`)
-            .then((response) => response.json())
-            .then((data) => {
-                const userScore = document.querySelector('#user-score');
-                userScore.textContent = data.score;
-            })
-            .catch((error) => {
-                    console.error('Error:', error);
-                }
-            );
-
     });
 
     // Contest button logic (leaderboard)
@@ -148,54 +200,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     });
 
-    /**
-     * Check if the position fits the target
-     * @param {HTMLElement} targetElement - The target element to check against.
-     * @param {number} centerX - The X coordinate of the center of the icon.
-     * @param {number} centerY - The Y coordinate of the center of the icon.
-     * @returns {boolean} - Returns true if the position fits within the target element, otherwise false.
-     */
-    const checkIfPositionFits = (targetElement, centerX, centerY) => {
-        // Calculate the center of the targetElement
-        const targetCenterX = targetElement.clientWidth / 2;
-        const targetCenterY = targetElement.clientHeight / 2;
-
-        // Calculate the radius of the targetElement
-        const tapZoneRadius = targetElement.clientWidth / 2; // Assuming the targetElement is a circle
-
-        // Calculate the distance from the center of the icon to the center of the targetElement
-        const distance =
-            Math.sqrt(Math.pow(centerX - targetCenterX, 2) + Math.pow(centerY - targetCenterY, 2));
-
-        // Check if the icon is within the targetElement
-        return distance + 12 <= tapZoneRadius; // 12 is half the width/height of the icon
-    }
-
-    /**
-     * Get a random position for the icon within the parent target
-     * @param {HTMLElement} parentTarget - The parent target element.
-     * @param {number} iconWidth - The width of the icon.
-     * @returns {[number, number]} - Returns an array with the X and Y coordinates of the icon.
-     */
-    const getRandomIconPosition = (parentTarget, iconWidth) => {
-        const randomX = Math.random() * (parentTarget.clientWidth - iconWidth);
-        const randomY = Math.random() * (parentTarget.clientHeight - iconWidth);
-        const iconRadius = iconWidth / 2;
-
-        // Check if the position fits the target
-        if (!checkIfPositionFits(parentTarget, randomX - iconRadius, randomY - iconRadius)) {
-            // Icon outside the target area, recalculating position
-            return getRandomIconPosition(parentTarget, iconWidth);
-        }
-
-        return [randomX, randomY];
-    }
-
     let score = 0;
 
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
-        console.log('Clicked on the tap zone!');
-        document.querySelector('[data-score]').innerHTML = ++score;
+        userscore++;
+        updateAllScores();
 
         fetch('/api/click', {
             method: 'POST',
