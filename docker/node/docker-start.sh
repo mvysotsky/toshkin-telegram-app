@@ -1,4 +1,4 @@
 #!/bin/bash
 
-echo "Installing node modules in..."
+echo "Installing node modules..."
 npm ci
