@@ -1,6 +1,13 @@
-const username = 'your-username'; // TODO: Replace with the actual username
+const app = window.Telegram.WebApp;
+
+const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
+console.log('username', username);
 
 document.addEventListener("DOMContentLoaded", function () {
+    // Expand Telegram view to fullscreen
+    app.ready();
+    app.expand();
+
     const targetDate = new Date("2024-07-22");
     const countdownElement = document.querySelector(".launch-button h2");
 
