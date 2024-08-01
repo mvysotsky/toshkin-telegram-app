@@ -1,4 +1,5 @@
 const express = require('express');
+const { PublicKey } = require('@solana/web3.js');
 const router = express.Router();
 const knex = require('knex')({
     client: 'mysql2',
@@ -80,6 +81,35 @@ router.get('/leaderboard', async (req, res) => {
             .offset(offset);
 
         res.status(200).json(leaderboard);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// API route to handle POST /api/wallet
+router.post('/wallet', async (req, res) => {
+    const { username, wallet } = req.body;
+
+    try {
+        // Validate Solana wallet address
+        if (!PublicKey.isOnCurve(wallet)) {
+            return res.status(400).send('Invalid Solana address!');
+        }
+
+        // Check if the user exists in the users table
+        const user = await knex('users').where({username}).first();
+
+        if (user) {
+            // Update the user's wallet address in the users table
+            await knex('users')
+                .where({ id: user.id })
+                .update({ wallet });
+        } else {
+            res.status(404).send('User not found');
+        }
+
+        res.status(200).send('Wallet updated');
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
