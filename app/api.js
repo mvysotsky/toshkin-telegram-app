@@ -57,7 +57,10 @@ router.get('/profile', async (req, res) => {
 
             res.status(200).json({ username, score });
         } else {
-            res.status(404).send('User not found');
+            const [userID] = await knex('users').insert({ username });
+            await knex('leaderboard').insert({ user_id: userID, score: 0 });
+
+            res.status(200).json({ username, score: 0 });
         }
     } catch (error) {
         console.error(error);
