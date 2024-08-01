@@ -75,12 +75,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     app.ready();
     app.expand();
 
-    const targetDate = new Date("2024-07-22");
-    const countdownElement = document.querySelector(".launch-button h2");
-
     const updateCountdown = () => {
         const now = new Date();
+        const targetDate = new Date("2024-07-22");
         const difference = targetDate - now;
+        const countdownElement = document.querySelector(".launch-button h2");
 
         if (difference < 0) {
             clearInterval(intervalId);
@@ -126,7 +125,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }, 200);
     });
 
-    // TapZone button click event listener
+    // TapZone button
     document.querySelector('.menu-button.tap-zone-btn').addEventListener('click', function () {
         hideAllViews();
         document.querySelector('.tap-zone').style.display = 'flex';
@@ -135,7 +134,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.querySelector('.referral-button').style.display = 'none';
     });
 
-    // Profile button click event listener
+    // Quests button
+    document.querySelector('.menu-button.quests').addEventListener('click', function () {
+        window.open('https://www.intract.io/project/toshkin-coin', '_blank');
+    });
+
+    // Profile button
     document.querySelector('.menu-button.profile').addEventListener('click', async function () {
         hideAllViews();
         await updateProfile(username);
@@ -199,8 +203,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 ratingTableBody.innerHTML = '<div class="error">Failed to load leaderboard</div>';
             });
     });
-
-    let score = 0;
 
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
         userscore++;
