@@ -1,9 +1,11 @@
 const app = window.Telegram.WebApp;
 
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
-console.log('username', username);
 
 document.addEventListener("DOMContentLoaded", function () {
+    // set #username element text to the username
+    document.querySelector('#username').textContent = username;
+
     // Expand Telegram view to fullscreen
     app.ready();
     app.expand();
