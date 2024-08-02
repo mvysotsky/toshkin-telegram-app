@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Launch to the Moon button click event listener
     document.querySelector(".launch-button").addEventListener("click", function () {
-        window.location.href = "https://www.pinksale.finance/solana/launchpad/2Lwyqnu6QiFshC79WdQJc4R7CK3AtVMfHPZCgP4oSH6x";
+        window.open('https://www.pinksale.finance/solana/launchpad/2Lwyqnu6QiFshC79WdQJc4R7CK3AtVMfHPZCgP4oSH6x', '_blank');
     });
 
     // Referral button click event listener
