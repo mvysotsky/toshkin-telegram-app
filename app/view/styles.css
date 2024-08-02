@@ -270,7 +270,8 @@ div.rating-table-row {
 }
 
 .profile-box {
-    margin-top: 28px;
+    /*margin-top: 28px;*/
+    margin-top: auto;
 }
 
 .rating-table-cell:nth-child(2) {

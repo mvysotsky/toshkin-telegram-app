@@ -67,6 +67,19 @@ const updateProfile = async (username) => {
     }
 }
 
+const handleSolKeyboardInput = () => {
+    const solInputEl = document.querySelector('[data-sol-address-input]');
+    const referralButton = document.querySelector('.referral-button');
+
+    solInputEl.addEventListener('focus', () => {
+        referralButton.style.display = 'none';
+    });
+
+    solInputEl.addEventListener('blur', () => {
+        referralButton.style.display = 'flex';
+    });
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     // set #username element text to the username
     document.querySelector('#username').textContent = app.initDataUnsafe.user
@@ -75,6 +88,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Fetch profile to set correct user score
     await updateProfile(username);
+    handleSolKeyboardInput();
 
     // Expand Telegram view to fullscreen
     app.ready();
@@ -149,8 +163,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         hideAllViews();
         await updateProfile(username);
 
-        const profileName = document.querySelector('.profile-name');
-        profileName.style.display = 'flex';
+        // hide username for now
+        // const profileName = document.querySelector('.profile-name');
+        // profileName.style.display = 'flex';
 
         const profileView = document.querySelector('.profile-box');
         profileView.style.display = 'flex';
