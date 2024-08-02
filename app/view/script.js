@@ -66,7 +66,9 @@ const updateProfile = async (username) => {
 
 document.addEventListener("DOMContentLoaded", async function () {
     // set #username element text to the username
-    document.querySelector('#username').textContent = username;
+    document.querySelector('#username').textContent = app.initDataUnsafe.user
+        ? app.initDataUnsafe.user.first_name
+        : username;
 
     // Fetch profile to set correct user score
     await updateProfile(username);
