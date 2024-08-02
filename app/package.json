@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@solana/web3.js": "^1.95.2",
+    "crc": "^4.3.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "knex": "^3.1.0",

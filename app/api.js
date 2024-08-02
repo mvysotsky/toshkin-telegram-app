@@ -2,6 +2,7 @@ const express = require('express');
 const { PublicKey } = require('@solana/web3.js');
 const router = express.Router();
 const knex = require('./database');
+const { GetRefString } = require('./tools');
 
 // API route to handle POST /api/click
 router.post('/click', async (req, res) => {
@@ -37,22 +38,24 @@ router.get('/profile', async (req, res) => {
 
     try {
         // Check if the user exists in the users table
-        const user = await knex('users').where({username}).first();
+        let user = await knex('users').where({username}).first();
 
-        if (user) {
-            // Get the user's score from the leaderboard table
-            const { score } = await knex('leaderboard')
-                .where({ user_id: user.id })
-                .select('score')
-                .first();
-
-            res.status(200).json({ username, score });
-        } else {
+        if (!user) {
             const [userID] = await knex('users').insert({ username });
             await knex('leaderboard').insert({ user_id: userID, score: 0 });
 
-            res.status(200).json({ username, score: 0 });
+            user = await knex('users').where({username}).first();
         }
+
+        const { score } = await knex('leaderboard')
+            .where({ user_id: user.id })
+            .select('score')
+            .first();
+
+        const referral_code = GetRefString(username, user.created_at);
+        const referral_link = `${process.env.WEB_APP_URL}?startapp=${referral_code}`;
+
+        res.status(200).json({ username, score, referral_link });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
