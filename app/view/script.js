@@ -142,6 +142,32 @@ document.addEventListener("DOMContentLoaded", async function () {
         setTimeout(() => {
             e.target.innerHTML = "Copied! Share with Toshkiners!";
         }, 200);
+
+        hideAllViews();
+
+        // Show referral-table and fill with GET api/referred data
+        fetch(`/api/referred?username=${username}`)
+            .then(response => response.json())
+            .then(data => {
+                const referralTable = document.querySelector('.referral-table');
+                const referralTableBody = document.querySelector('.referral-table-body');
+                referralTable.style.display = 'flex';
+                referralTableBody.innerHTML = '';
+
+                data.forEach((item, index) => {
+                    const newRow = document.createElement('div');
+                    newRow.classList.add('table-row');
+                    newRow.innerHTML = `
+                    <div class="table-cell">${index + 1}</div>
+                    <div class="table-cell">${item.username}</div>
+                    <div class="table-cell">2500</div>
+                `;
+                    referralTableBody.appendChild(newRow);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
 
     // TapZone button
@@ -212,11 +238,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                 // Add rows with leaderboard data
                 data.forEach((item, index) => {
                     const newRow = document.createElement('div');
-                    newRow.classList.add('rating-table-row');
+                    newRow.classList.add('table-row');
                     newRow.innerHTML = `
-                    <div class="rating-table-cell">${index + 1}</div>
-                    <div class="rating-table-cell">${item.username}</div>
-                    <div class="rating-table-cell">${item.score}</div>
+                    <div class="table-cell">${index + 1}</div>
+                    <div class="table-cell">${item.username}</div>
+                    <div class="table-cell">${item.score}</div>
                 `;
                     ratingTableBody.appendChild(newRow);
                 });

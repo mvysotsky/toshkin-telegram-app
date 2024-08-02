@@ -218,7 +218,7 @@ div.rating-table {
     gap: 16px;
 }
 
-div.rating-table-header {
+div.rating-table-header, div.referral-table-header {
     gap: 8px;
 }
 
@@ -244,14 +244,20 @@ div.stars-display {
     background: url('img/stars.png') transparent -1.068px -24.769px / 100% 284.615% no-repeat;
 }
 
-div.rating-table-body {
+div.paws-display {
+    width: 115px;
+    height: 53px;
+    background: url('img/paws.png') transparent no-repeat;
+}
+
+div.table-body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     align-self: stretch;
 }
 
-div.rating-table-row {
+div.table-row {
     display: flex;
     width: 100%;
     padding: 8px 16px;
@@ -274,12 +280,12 @@ div.rating-table-row {
     margin-top: auto;
 }
 
-.rating-table-cell:nth-child(2) {
+.table-cell:nth-child(2) {
     margin-right: auto;
     margin-left: 10px;
 }
 
-.rating-table-cell:nth-child(1) {
+.table-cell:nth-child(1) {
     color: rgba(255, 255, 255, 0.50);
 }
 
