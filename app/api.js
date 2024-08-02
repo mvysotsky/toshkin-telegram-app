@@ -100,6 +100,30 @@ router.get('/leaderboard', async (req, res) => {
     }
 });
 
+// API route to handle GET /api/referred
+router.get('/referred', async (req, res) => {
+    const { username } = req.query;
+
+    try {
+        // Check if the user exists in the users table
+        const user = await knex('users').where({username}).first();
+
+        if (user) {
+            // Get all users where the referred_by column matches the user's ID
+            const referred = await knex('users')
+                .where({ referred_by: user.id })
+                .select('username', 'created_at');
+
+            res.status(200).json(referred);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // API route to handle POST /api/wallet
 router.post('/wallet', async (req, res) => {
     const { username, wallet } = req.body;
