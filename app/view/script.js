@@ -56,7 +56,8 @@ function updateAllScores() {
 
 const updateProfile = async (username) => {
     try {
-        const response = await fetch(`/api/profile?username=${username}`);
+        const ref_string = app.initDataUnsafe.start_param ?? '';
+        const response = await fetch(`/api/profile?username=${username}&ref_string=${ref_string}`);
         const data = await response.json();
         userscore = data.score;
         referral_link = data.referral_link;

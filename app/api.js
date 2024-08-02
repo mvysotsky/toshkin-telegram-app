@@ -34,17 +34,29 @@ router.post('/click', async (req, res) => {
 
 // API route to handle GET /api/profile
 router.get('/profile', async (req, res) => {
-    const { username } = req.query;
+    const { username, ref_string } = req.query;
 
     try {
         // Check if the user exists in the users table
         let user = await knex('users').where({username}).first();
 
         if (!user) {
-            const [userID] = await knex('users').insert({ username });
+            // Search for the referrer user in the users table
+            const ref_user = await knex('users')
+                .whereRaw(`HEX(CRC32(CONCAT(username, id))) = '${ref_string}'`).first();
+            const referred_by = ref_user ? ref_user.id : null;
+
+            const [userID] = await knex('users').insert({ username, referred_by });
             await knex('leaderboard').insert({ user_id: userID, score: 0 });
 
             user = await knex('users').where({username}).first();
+
+            // Increment the referrer's score in the leaderboard table by 2500
+            if (referred_by) {
+                await knex('leaderboard')
+                    .where({ user_id: referred_by })
+                    .increment('score', 2500);
+            }
         }
 
         const { score } = await knex('leaderboard')
