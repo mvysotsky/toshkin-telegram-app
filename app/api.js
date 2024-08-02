@@ -52,8 +52,8 @@ router.get('/profile', async (req, res) => {
             .select('score')
             .first();
 
-        const referral_code = GetRefString(username, user.created_at);
-        const referral_link = `${process.env.WEB_APP_URL}?startapp=${referral_code}`;
+        const referral_code = GetRefString(username, user.id);
+        const referral_link = `${process.env.TELEGRAM_APP_URL}?startapp=${referral_code}`;
 
         res.status(200).json({ username, score, referral_link });
     } catch (error) {
