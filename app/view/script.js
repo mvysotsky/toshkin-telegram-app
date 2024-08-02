@@ -2,6 +2,7 @@ const app = window.Telegram.WebApp;
 
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
 let userscore = 0;
+let referral_link = '';
 
 /**
  * Check if the position fits the target
@@ -58,6 +59,7 @@ const updateProfile = async (username) => {
         const response = await fetch(`/api/profile?username=${username}`);
         const data = await response.json();
         userscore = data.score;
+        referral_link = data.referral_link;
         updateAllScores();
     } catch (e) {
         console.error('Error:', e);
@@ -121,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Referral button click event listener
     document.querySelector(".referral-button").addEventListener("click", function (e) {
-        navigator.clipboard.writeText(`https://t.me/TOSHKIN_COIN_bot/start?startapp=${username}`);
+        navigator.clipboard.writeText(referral_link);
         setTimeout(() => {
             e.target.innerHTML = "Copied! Share with Toshkiners!";
         }, 200);
