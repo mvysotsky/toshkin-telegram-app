@@ -3,6 +3,8 @@
     --purp-grad: linear-gradient(180deg, #140079 -77.21%, #9C00DF 100%);
     --red-grad-rev: #D50039;
     --red-grad: linear-gradient(180deg, #790014 -77.21%, #DF0024 100%);
+    --orange-grad-rev: #FE8301;
+    --orange-grad: linear-gradient(180deg, #791A00 -77.21%, #FF8400 100%);
 }
 
 *, *::before, *::after {
@@ -145,9 +147,20 @@ div.update-address-button {
     align-self: stretch;
 
     border-radius: 15px;
-    border: 4px solid #FE8301;
-    background: linear-gradient(180deg, #791A00 -77.21%, #FF8400 100%);
+    border: 4px solid var(--orange-grad-rev);
+    background: var(--orange-grad);
     box-shadow: 0 7px 0 0 #601500;
+
+    font-size: 24px;
+    line-height: 1.1;
+
+    transition: 0.05s linear 0s;
+}
+
+div.update-address-button:active {
+    box-shadow: 0 7px 0 0 var(--orange-grad-rev);
+    border-color: transparent;
+    border-bottom: none;
 }
 
 .launch-button h2 {

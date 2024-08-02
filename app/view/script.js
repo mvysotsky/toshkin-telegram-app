@@ -260,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         function showError(errorType) {
             const texts = {
                 default: 'Update Address',
-                invalid: 'Invalid Address',
+                invalid: 'Invalid Address!',
                 oops: 'Whoopsie, try later',
             }
             e.target.innerHTML = texts[errorType];
