@@ -294,6 +294,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     });
 
+    // Hide keyboard on iOS when tapping outside the input field
+    document.addEventListener('click', function(event) {
+        const solInputEl = document.querySelector('[data-sol-address-input]');
+        if (solInputEl && !solInputEl.contains(event.target)) {
+            solInputEl.blur();
+        }
+    });
+
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
         userscore++;
         updateAllScores();
