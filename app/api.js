@@ -41,10 +41,14 @@ router.get('/profile', async (req, res) => {
         let user = await knex('users').where({username}).first();
 
         if (!user) {
-            // Search for the referrer user in the users table
-            const ref_user = await knex('users')
-                .whereRaw(`HEX(CRC32(CONCAT(username, id))) = '${ref_string}'`).first();
-            const referred_by = ref_user ? ref_user.id : null;
+            let referred_by = null;
+
+            if (ref_string) {
+                // Search for the referrer user in the users table
+                const ref_user = await knex('users')
+                    .whereRaw(`HEX(CRC32(CONCAT(username, id))) = '${ref_string}'`).first();
+                referred_by = ref_user.id;
+            }
 
             const [userID] = await knex('users').insert({ username, referred_by });
             await knex('leaderboard').insert({ user_id: userID, score: 0 });
