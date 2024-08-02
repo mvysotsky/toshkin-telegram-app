@@ -158,6 +158,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         const referralButton = document.querySelector('.referral-button');
         referralButton.innerHTML = 'Copy referral link';
         referralButton.style.display = 'flex';
+
+        const updateSolAddressButton = document.querySelector('.update-address-button');
+        updateSolAddressButton.innerHTML = 'Update Address';
     });
 
     // Contest button logic (leaderboard)
@@ -204,6 +207,47 @@ document.addEventListener("DOMContentLoaded", async function () {
                 console.error('Error:', error);
                 ratingTableBody.innerHTML = '<div class="error">Failed to load leaderboard</div>';
             });
+    });
+
+    // Update SOL address
+    document.querySelector('.update-address-button').addEventListener('click', function (e) {
+        const solInputEl = document.querySelector('[data-sol-address-input]');
+
+        function showError(errorType) {
+            const texts = {
+                default: 'Update Address',
+                invalid: 'Invalid Address',
+                oops: 'Whoopsie, try later',
+            }
+            e.target.innerHTML = texts[errorType];
+            setTimeout(() => {
+                e.target.innerHTML = texts['default'];
+            }, 2000);
+        }
+
+        if (solInputEl.value && solInputEl.value.match(/^[A-Za-z0-9]{32,44}$/)) {
+            fetch('/api/wallet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username: username, wallet: solInputEl.value})
+            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        e.target.innerHTML = 'Saved!';
+                    } else if (response.status === 400) {
+                        showError('invalid');
+                    } else {
+                        showError('oops');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        } else {
+            showError('invalid');
+        }
     });
 
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
