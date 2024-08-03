@@ -71,12 +71,28 @@ const handleSolKeyboardInput = () => {
     const solInputEl = document.querySelector('[data-sol-address-input]');
     const referralButton = document.querySelector('.referral-button');
 
-    solInputEl.addEventListener('focus', () => {
-        referralButton.style.display = 'none';
+    // Hide referral button so it will not consume the space
+    // solInputEl.addEventListener('focus', () => {
+    //     referralButton.style.display = 'none';
+    // });
+    //
+    // solInputEl.addEventListener('blur', () => {
+    //     referralButton.style.display = 'flex';
+    // });
+
+    // Prevent propagating to the parent
+    solInputEl.addEventListener('click', function(event) {
+        event.stopPropagation();
     });
 
-    solInputEl.addEventListener('blur', () => {
-        referralButton.style.display = 'flex';
+    // Hide keyboard on iOS when tapping outside the input field
+    document.querySelector('.profile-box').addEventListener('click', function(event) {
+        const isClickOutside = ! solInputEl.contains(event.target);
+
+        if (isClickOutside) {
+            console.log('click outside and hide keyboard');
+            solInputEl.blur();
+        }
     });
 }
 
@@ -291,19 +307,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 });
         } else {
             showError('invalid');
-        }
-    });
-
-    // Hide keyboard on iOS when tapping outside the input field
-    document.querySelector('.profile-box').addEventListener('click', function(event) {
-        const solInputEl = document.querySelector('[data-sol-address-input]');
-
-        // detect if the click event was on the input field
-        const isClickOutside = ! solInputEl.contains(event.target);
-
-        if (isClickOutside && document.activeElement === solInputEl) {
-            console.log('outside and hide keyboard');
-            // solInputEl.blur();
         }
     });
 
