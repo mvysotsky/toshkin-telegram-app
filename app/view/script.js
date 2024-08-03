@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.querySelector('div.app-content.mobile').style.display = 'none';
         document.querySelector('div.app-content.not-telegram').style.display = 'flex';
         document.querySelector('div.mobile-qr').addEventListener('click',
-            () => window.open('https://t.me/ToshkinAppBot')
+            () => window.open('https://t.me/ToshkinAppBot/toshkin?startapp')
         );
         document.body.classList.add('not-telegram');
 
