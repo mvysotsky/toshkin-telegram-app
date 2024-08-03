@@ -18,15 +18,17 @@ const postUserScore = async () => {
     const score_to_post = PendingScore;
     PendingScore = 0;
 
-    fetch('/api/add_score', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({username, score: score_to_post})
-    }).then().catch((error) => {
+    try {
+        await fetch('/api/add_score', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({username, score: score_to_post})
+        });
+    } catch (error) {
         console.error('Error:', error);
-    });
+    }
 }
 
 /**
@@ -96,13 +98,13 @@ const handleSolKeyboardInput = () => {
     const solInputEl = document.querySelector('[data-sol-address-input]');
 
     // Prevent propagating to the parent
-    solInputEl.addEventListener('click', function(event) {
+    solInputEl.addEventListener('click', function (event) {
         event.stopPropagation();
     });
 
     // Hide keyboard on iOS when tapping outside the input field
-    document.querySelector('.profile-box').addEventListener('click', function(event) {
-        const isClickOutside = ! solInputEl.contains(event.target);
+    document.querySelector('.profile-box').addEventListener('click', function (event) {
+        const isClickOutside = !solInputEl.contains(event.target);
 
         if (isClickOutside) {
             console.log('click outside and hide keyboard');
@@ -221,6 +223,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Profile button
     document.querySelector('.menu-button.profile').addEventListener('click', async function () {
         hideAllViews();
+
+        await postUserScore();
         await updateProfile(username);
 
         // hide username for now
