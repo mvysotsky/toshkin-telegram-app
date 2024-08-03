@@ -3,8 +3,10 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
+const router = express.Router();
 const bot = require('./bot'); // Import the bot instance
 const apiRoutes = require('./api'); // Import the API routes
+const { CheckUserAgent } = require('./middleware'); // Import the checkUserAgent middleware
 
 const app = express();
 const HTTP_PORT = process.env.PORT || 3000;
@@ -12,6 +14,10 @@ const HTTPS_PORT = process.env.HTTPS_PORT || 3443;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// Serve main html file
+router.get('/', CheckUserAgent);
+app.use(router);
 
 // Serve static files from the 'app/view' directory
 app.use(express.static(path.join(__dirname, 'view')));
