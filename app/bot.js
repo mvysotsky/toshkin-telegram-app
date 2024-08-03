@@ -6,8 +6,8 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 const WEB_APP_URL = "https://toshkin.click";
 
 bot.start((ctx) => {
-    ctx.reply('Welcome!', Markup.inlineKeyboard([
-        Markup.button.webApp('Open Web App', WEB_APP_URL)
+    ctx.reply('Welcome to the Toshkin Game!', Markup.inlineKeyboard([
+        Markup.button.webApp('🚀 Start!', WEB_APP_URL)
     ]));
 });
 
