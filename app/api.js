@@ -4,9 +4,19 @@ const router = express.Router();
 const knex = require('./database');
 const { GetRefString } = require('./tools');
 
+const SCORE_FRAUD_LIMIT = 20;
+
 // API route to handle POST /api/add_score
 router.post('/add_score', async (req, res) => {
     const { username, score } = req.body;
+
+    if (!score || score < 0) {
+        return res.status(400).send('Invalid score');
+    }
+
+    if (score > SCORE_FRAUD_LIMIT) {
+        return res.status(400).send('Looks like you are trying to cheat');
+    }
 
     try {
         // Check if the user exists in the users table
