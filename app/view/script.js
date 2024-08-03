@@ -52,6 +52,9 @@ function updateAllScores() {
     document.querySelectorAll('[data-score]').forEach(element => {
         element.innerHTML = userscore;
     });
+    if (userscore > 10) {
+        document.querySelector('[data-tap-zone-title]').style.display = 'none';
+    }
 }
 
 const updateProfile = async (username) => {
@@ -149,7 +152,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Launch to the Moon button click event listener
     document.querySelector(".launch-button").addEventListener("click", function () {
-        window.open('https://www.pinksale.finance/solana/launchpad/2Lwyqnu6QiFshC79WdQJc4R7CK3AtVMfHPZCgP4oSH6x', '_blank');
+        window.open('https://www.pinksale.finance/solana/launchpad/FraHQz6aqsYhoGM8xzKhoAMumUL7GyFbEq4VXsaFiHk2', '_blank');
     });
 
     // Referral button click event listener
