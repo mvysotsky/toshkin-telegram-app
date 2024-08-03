@@ -117,6 +117,17 @@ const handleSolKeyboardInput = () => {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
+    if (!app.initDataUnsafe.user) {
+        document.querySelector('div.app-content.mobile').style.display = 'none';
+        document.querySelector('div.app-content.not-telegram').style.display = 'flex';
+        document.querySelector('div.mobile-qr').addEventListener('click',
+            () => window.open('https://t.me/ToshkinAppBot')
+        );
+        document.body.classList.add('not-telegram');
+
+        return;
+    }
+
     // set #username element text to the username
     document.querySelector('#username').textContent = app.initDataUnsafe.user
         ? app.initDataUnsafe.user.first_name
