@@ -295,14 +295,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     // Hide keyboard on iOS when tapping outside the input field
-    document.addEventListener('click', function(event) {
+    document.querySelector('.profile-box').addEventListener('click', function(event) {
         const solInputEl = document.querySelector('[data-sol-address-input]');
 
         // detect if the click event was on the input field
-        const isClickInside = solInputEl.contains(event.target);
+        const isClickOutside = ! solInputEl.contains(event.target);
 
-        if (!isClickInside) {
-            solInputEl.blur();
+        if (isClickOutside && document.activeElement === solInputEl) {
+            console.log('outside and hide keyboard');
+            // solInputEl.blur();
         }
     });
 
