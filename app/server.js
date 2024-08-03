@@ -25,12 +25,6 @@ app.use(express.static(path.join(__dirname, 'view')));
 // Use the API routes
 app.use('/api', apiRoutes);
 
-// log ip from request
-app.use((req, res, next) => {
-    console.log('Request IP: ', req.ip);
-    next();
-});
-
 // Start the HTTP server
 http.createServer(app).listen(HTTP_PORT, () => {
     console.log(`HTTP Server is running on http://localhost:${HTTP_PORT}`);

@@ -260,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     // Contest button logic (leaderboard)
-    document.querySelector('.menu-button.contest').addEventListener('click', function () {
+    document.querySelector('.menu-button.contest').addEventListener('click', async function () {
         hideAllViews();
 
         const ratingTable = document.querySelector('.rating-table');
@@ -279,6 +279,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Show loading spinner
         ratingTableBody.innerHTML = '<div class="spinner"></div>';
+
+        await postUserScore();
 
         // Fetch leaderboard data
         fetch('/api/leaderboard')
@@ -346,6 +348,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     });
 
+    // TapZone Click
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
         UserScore++;
         PendingScore++;
