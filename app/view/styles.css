@@ -314,9 +314,9 @@ div.table-row {
 }
 
 div.tap-zone {
-    width: 93%;
-    height: 38%;
-    margin: 70% auto 0 auto;
+    width: 78%;
+    height: 30%;
+    margin: 35vh auto 0 auto;
     border-radius: 50%;
     background-color: transparent;
     position: relative;
