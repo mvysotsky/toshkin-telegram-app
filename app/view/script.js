@@ -167,7 +167,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Launch to the Moon button click event listener
     document.querySelector(".launch-button").addEventListener("click", function () {
-        window.open('https://www.pinksale.finance/solana/launchpad/2Lwyqnu6QiFshC79WdQJc4R7CK3AtVMfHPZCgP4oSH6x', '_blank');
+        app.openLink('https://www.pinksale.finance/solana/launchpad/2Lwyqnu6QiFshC79WdQJc4R7CK3AtVMfHPZCgP4oSH6x')
+    });
+
+    // Quests button
+    document.querySelector('.menu-button.quests').addEventListener('click', function () {
+        app.openLink('https://www.intract.io/project/toshkin-coin');
     });
 
     // Referral button click event listener
@@ -211,11 +216,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.querySelector('.tap-score').style.display = 'flex';
         document.querySelector('.launch-button').style.display = 'flex';
         document.querySelector('.referral-button').style.display = 'none';
-    });
-
-    // Quests button
-    document.querySelector('.menu-button.quests').addEventListener('click', function () {
-        window.open('https://www.intract.io/project/toshkin-coin', '_blank');
     });
 
     // Profile button
