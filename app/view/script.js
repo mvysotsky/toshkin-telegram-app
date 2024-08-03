@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Referral button click event listener
     document.querySelector(".referral-button").addEventListener("click", function (e) {
-        navigator.clipboard.writeText(referral_link);
+        navigator.clipboard.writeText(ReferralLink);
         setTimeout(() => {
             e.target.innerHTML = "Copied! Share with Toshkiners!";
         }, 200);
