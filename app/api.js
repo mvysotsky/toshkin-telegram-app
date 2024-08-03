@@ -4,26 +4,22 @@ const router = express.Router();
 const knex = require('./database');
 const { GetRefString } = require('./tools');
 
-// API route to handle POST /api/click
-router.post('/click', async (req, res) => {
-    const { username } = req.body;
+// API route to handle POST /api/add_score
+router.post('/add_score', async (req, res) => {
+    const { username, score } = req.body;
 
     try {
         // Check if the user exists in the users table
         const user = await knex('users').where({username}).first();
 
-        if (user) {
-            // Increment the user's score in the leaderboard table by 1
-            await knex('leaderboard')
-                .where({ user_id: user.id })
-                .increment('score', 1);
-        } else {
-            // Create a new user in the users table
-            const [userID] = await knex('users').insert({ username });
-
-            // Create a new record in the leaderboard table
-            await knex('leaderboard').insert({ user_id: userID, score: 1 });
+        if (!user) {
+            return res.status(404).send('User not found');
         }
+
+        // Increment the user's score in the leaderboard table by the specified amount
+        await knex('leaderboard')
+            .where({ user_id: user.id })
+            .increment('score', score);
 
         res.status(200).send('Score updated');
     } catch (error) {

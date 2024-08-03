@@ -1,8 +1,33 @@
 const app = window.Telegram.WebApp;
 
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
-let userscore = 0;
-let referral_link = '';
+
+const ScoreUpdateInterval = 2000;
+
+let UserScore = 0;
+let PendingScore = 0;
+let ReferralLink = '';
+
+/**
+ * Post the user's score to the server using POST /api/add_score
+ * @returns {Promise<void>}
+ */
+const postUserScore = async () => {
+    if (PendingScore === 0) return;
+
+    const score_to_post = PendingScore;
+    PendingScore = 0;
+
+    fetch('/api/add_score', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({username, score: score_to_post})
+    }).then().catch((error) => {
+        console.error('Error:', error);
+    });
+}
 
 /**
  * Check if the position fits the target
@@ -50,7 +75,7 @@ const getRandomIconPosition = (parentTarget, iconWidth) => {
 // Function to update all elements with data-score attribute
 function updateAllScores() {
     document.querySelectorAll('[data-score]').forEach(element => {
-        element.innerHTML = userscore;
+        element.innerHTML = UserScore;
     });
 }
 
@@ -59,8 +84,8 @@ const updateProfile = async (username) => {
         const ref_string = app.initDataUnsafe.start_param ?? '';
         const response = await fetch(`/api/profile?username=${username}&ref_string=${ref_string}`);
         const data = await response.json();
-        userscore = data.score;
-        referral_link = data.referral_link;
+        UserScore = data.score;
+        ReferralLink = data.referral_link;
         updateAllScores();
     } catch (e) {
         console.error('Error:', e);
@@ -69,16 +94,6 @@ const updateProfile = async (username) => {
 
 const handleSolKeyboardInput = () => {
     const solInputEl = document.querySelector('[data-sol-address-input]');
-    const referralButton = document.querySelector('.referral-button');
-
-    // Hide referral button so it will not consume the space
-    // solInputEl.addEventListener('focus', () => {
-    //     referralButton.style.display = 'none';
-    // });
-    //
-    // solInputEl.addEventListener('blur', () => {
-    //     referralButton.style.display = 'flex';
-    // });
 
     // Prevent propagating to the parent
     solInputEl.addEventListener('click', function(event) {
@@ -105,6 +120,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Fetch profile to set correct user score
     await updateProfile(username);
     handleSolKeyboardInput();
+
+    // Update the user's score every ScoreUpdateInterval milliseconds
+    setInterval(postUserScore, ScoreUpdateInterval);
 
     // Expand Telegram view to fullscreen
     app.ready();
@@ -311,20 +329,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
-        userscore++;
+        UserScore++;
+        PendingScore++;
         updateAllScores();
-
-        fetch('/api/click', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({username: username})
-        })
-            .then()
-            .catch((error) => {
-                console.error('Error:', error);
-            });
 
         /** @type {HTMLElement} */
         const tapZone = event.currentTarget;
