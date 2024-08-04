@@ -2,7 +2,7 @@ const app = window.Telegram.WebApp;
 
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
 
-const ScoreUpdateInterval = 2000;
+const SCORE_UPDATE_INTERVAL = 2000;
 
 let UserScore = 0;
 let PendingScore = 0;
@@ -137,8 +137,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     await updateProfile(username);
     handleSolKeyboardInput();
 
-    // Update the user's score every ScoreUpdateInterval milliseconds
-    setInterval(postUserScore, ScoreUpdateInterval);
+    // Update the user's score every SCORE_UPDATE_INTERVAL milliseconds
+    setInterval(postUserScore, SCORE_UPDATE_INTERVAL);
 
     // Expand Telegram view to fullscreen
     app.ready();

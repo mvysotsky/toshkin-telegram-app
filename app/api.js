@@ -3,11 +3,20 @@ const { PublicKey } = require('@solana/web3.js');
 const router = express.Router();
 const knex = require('./database');
 const { GetRefString } = require('./tools');
+const {LogIP} = require("./middleware");
+const rateLimit = require('express-rate-limit');
 
 const SCORE_FRAUD_LIMIT = 20;
 
+// Create a rate limiter middleware (1 request per second)
+const addRequestLimiter = rateLimit({
+    windowMs: 700, // miliseconds
+    max: 1, // Limit each IP to 1 request per windowMs
+    message: 'Too many requests, please try again later.'
+});
+
 // API route to handle POST /api/add_score
-router.post('/add_score', async (req, res) => {
+router.post('/add_score', addRequestLimiter, LogIP, async (req, res) => {
     const { username, score } = req.body;
 
     if (!score || score < 0) {

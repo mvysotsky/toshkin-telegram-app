@@ -16,4 +16,15 @@ const CheckUserAgent = (req, res) => {
     }
 };
 
-module.exports = { CheckUserAgent };
+/**
+ * Logs the IP address of the request
+ * @param {Request} req
+ * @param {Response} res
+ * @param {Function} next
+ */
+const LogIP = (req, res, next) => {
+    console.log('Request IP:', req.ip);
+    next();
+};
+
+module.exports = { CheckUserAgent, LogIP };
