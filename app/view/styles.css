@@ -416,6 +416,10 @@ div.tap-zone {
     background-size: contain;
 }
 
+.icon-fraud {
+    background-image: url('img/penis.png') !important;
+}
+
 body.desktop, body.not-telegram {
     background: #2C0256;
 }

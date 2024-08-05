@@ -3,9 +3,11 @@ const app = window.Telegram.WebApp;
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
 
 const SCORE_UPDATE_INTERVAL = 2000;
+const SESSION_FRAUD_LIMIT = 1000;
 
 let UserScore = 0;
 let PendingScore = 0;
+let SessionScore = 0;
 let ReferralLink = '';
 
 /**
@@ -14,6 +16,10 @@ let ReferralLink = '';
  */
 const postUserScore = async () => {
     if (PendingScore === 0) return;
+    if (SessionScore > SESSION_FRAUD_LIMIT) {
+        console.error('Looks like you are trying to cheat');
+        return;
+    }
 
     const score_to_post = PendingScore;
     PendingScore = 0;
@@ -352,6 +358,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.querySelector('div.tap-zone').addEventListener('click', (event) => {
         UserScore++;
         PendingScore++;
+        SessionScore++;
         updateAllScores();
 
         /** @type {HTMLElement} */
@@ -365,7 +372,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         tapEffect.style.top = `${event.clientY}px`;
         icon.classList.add('icon');
         icon.classList.add(`icon-${randomIndex}`);
-        icon.style.transform = `rotate(${Math.floor(Math.random() * (30 + 30) + 1) - 30}deg)`;
+        // rotate the icon randomly between -30 and 30 degrees
+        icon.style.transform = `rotate(${Math.floor(Math.random() * (30 + 30) + 1) - 30}deg);`;
+
+        if (SessionScore > SESSION_FRAUD_LIMIT) {
+            // rotate the icon randomly between 0 and 360 degrees
+            icon.style.transform = `rotate(${Math.floor(Math.random() * 360)}deg)`;
+            icon.classList.add('icon-fraud');
+        }
 
         const [randomX, randomY] = getRandomIconPosition(tapZone, 24);
 
