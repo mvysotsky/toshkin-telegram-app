@@ -3,7 +3,7 @@ const { PublicKey } = require('@solana/web3.js');
 const router = express.Router();
 const knex = require('./database');
 const { GetRefString } = require('./tools');
-const {LogIP} = require("./middleware");
+const { LogRequest} = require("./middleware");
 const rateLimit = require('express-rate-limit');
 
 const SCORE_FRAUD_LIMIT = 50;
@@ -16,7 +16,7 @@ const addRequestLimiter = rateLimit({
 });
 
 // API route to handle POST /api/add_score
-router.post('/add_score', addRequestLimiter, LogIP, async (req, res) => {
+router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
     const { username, score } = req.body;
 
     if (!score || score < 0) {

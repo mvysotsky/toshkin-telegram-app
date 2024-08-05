@@ -22,9 +22,9 @@ const CheckUserAgent = (req, res) => {
  * @param {Response} res
  * @param {Function} next
  */
-const LogIP = (req, res, next) => {
-    console.log('Request IP:', req.ip);
+const LogRequest = (req, res, next) => {
+    console.log('Request IP:', req.ip, 'User-Agent:', req.headers['user-agent']);
     next();
 };
 
-module.exports = { CheckUserAgent, LogIP };
+module.exports = { CheckUserAgent, LogRequest };
