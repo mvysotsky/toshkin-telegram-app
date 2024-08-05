@@ -2,11 +2,12 @@ const express = require('express');
 const { PublicKey } = require('@solana/web3.js');
 const router = express.Router();
 const knex = require('./database');
-const { GetRefString } = require('./tools');
+const { GetRefString, GetRandomNumber } = require('./tools');
 const { LogRequest} = require("./middleware");
 const rateLimit = require('express-rate-limit');
 
-const SCORE_FRAUD_LIMIT = 50;
+const SCORE_FRAUD_LIMIT_LOW = 50;
+const SCORE_FRAUD_LIMIT_HIGH = 30;
 
 // Create a rate limiter middleware (1 request per second)
 const addRequestLimiter = rateLimit({
@@ -23,7 +24,7 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
         return res.status(400).send('Invalid score');
     }
 
-    if (score > SCORE_FRAUD_LIMIT) {
+    if (score > GetRandomNumber(SCORE_FRAUD_LIMIT_LOW, SCORE_FRAUD_LIMIT_HIGH)) {
         return res.status(400).send('Looks like you are trying to cheat');
     }
 
