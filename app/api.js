@@ -6,12 +6,12 @@ const { GetRefString } = require('./tools');
 const {LogIP} = require("./middleware");
 const rateLimit = require('express-rate-limit');
 
-const SCORE_FRAUD_LIMIT = 20;
+const SCORE_FRAUD_LIMIT = 50;
 
 // Create a rate limiter middleware (1 request per second)
 const addRequestLimiter = rateLimit({
-    windowMs: 700, // miliseconds
-    max: 1, // Limit each IP to 1 request per windowMs
+    windowMs: 1000, // miliseconds
+    max: 2, // Limit each IP to 1 request per windowMs
     message: 'Too many requests, please try again later.'
 });
 
