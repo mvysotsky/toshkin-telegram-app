@@ -3,7 +3,7 @@ const app = window.Telegram.WebApp;
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
 
 const SCORE_UPDATE_INTERVAL = 2000;
-const SESSION_FRAUD_LIMIT = 2000;
+const SESSION_FRAUD_LIMIT = 200;
 const SESSION_RESET_INTERVAL = 600000; // 10 minutes
 
 let UserScore = 0;
@@ -19,10 +19,10 @@ let FraudReported = false;
 const postUserScore = async () => {
     if (PendingScore === 0) return;
     if (SessionScore > SESSION_FRAUD_LIMIT) {
+        if (FraudReported) return;
+
         console.error('Looks like you are trying to cheat');
         const user_data = app.initDataUnsafe.user ? app.initDataUnsafe.user : username;
-
-        if (FraudReported) return;
 
         // report fraud
         await fetch('/api/fraud', {
@@ -167,6 +167,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     setInterval(() => {
         if (!FraudReported) {
             SessionScore = 0;
+            console.log('Session score reset');
         }
     }, SESSION_RESET_INTERVAL);
 
