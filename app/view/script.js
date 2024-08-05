@@ -3,12 +3,14 @@ const app = window.Telegram.WebApp;
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
 
 const SCORE_UPDATE_INTERVAL = 2000;
-const SESSION_FRAUD_LIMIT = 1000;
+const SESSION_FRAUD_LIMIT = 2000;
+const SESSION_RESET_INTERVAL = 600000; // 10 minutes
 
 let UserScore = 0;
 let PendingScore = 0;
 let SessionScore = 0;
 let ReferralLink = '';
+let FraudReported = false;
 
 /**
  * Post the user's score to the server using POST /api/add_score
@@ -18,6 +20,21 @@ const postUserScore = async () => {
     if (PendingScore === 0) return;
     if (SessionScore > SESSION_FRAUD_LIMIT) {
         console.error('Looks like you are trying to cheat');
+        const user_data = app.initDataUnsafe.user ? app.initDataUnsafe.user : username;
+
+        if (FraudReported) return;
+
+        // report fraud
+        await fetch('/api/fraud', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({user_data})
+        });
+
+        FraudReported = true;
+
         return;
     }
 
@@ -145,6 +162,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Update the user's score every SCORE_UPDATE_INTERVAL milliseconds
     setInterval(postUserScore, SCORE_UPDATE_INTERVAL);
+
+    // Set SessionScore to 0 every 5 minutes if FraudReported is false
+    setInterval(() => {
+        if (!FraudReported) {
+            SessionScore = 0;
+        }
+    }, SESSION_RESET_INTERVAL);
 
     // Expand Telegram view to fullscreen
     app.ready();

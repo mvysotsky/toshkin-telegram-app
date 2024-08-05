@@ -169,4 +169,17 @@ router.post('/wallet', async (req, res) => {
     }
 });
 
+// API route to handle GET /api/cheater receives info about possible cheater and logs it to the console
+router.post('/fraud', async (req, res) => {
+    const { user_data } = req.body;
+
+    if (!user_data) {
+        return res.status(400).send('User data is required');
+    }
+
+    console.log(`Possible cheater detected: ${user_data}`, `IP: ${req.ip}`, `User-Agent: ${req.headers['user-agent']}`);
+
+    res.status(200).send('Cheater reported');
+});
+
 module.exports = router;
