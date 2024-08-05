@@ -177,7 +177,7 @@ router.post('/fraud', async (req, res) => {
         return res.status(400).send('User data is required');
     }
 
-    console.log(`Possible cheater detected: ${user_data}`, `IP: ${req.ip}`, `User-Agent: ${req.headers['user-agent']}`);
+    console.log(`Possible cheater detected: ${JSON.stringify(user_data)}`, `IP: ${req.ip}`, `User-Agent: ${req.headers['user-agent']}`);
 
     res.status(200).send('Cheater reported');
 });
