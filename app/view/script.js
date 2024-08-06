@@ -11,6 +11,11 @@ let PendingScore = 0;
 let SessionScore = 0;
 let ReferralLink = '';
 let FraudReported = false;
+let FraudCount = 0;
+
+const getSessionFraudLimit = () => {
+    return SESSION_FRAUD_LIMIT / Math.pow(2, FraudCount);
+}
 
 /**
  * Post the user's score to the server using POST /api/add_score
@@ -18,7 +23,8 @@ let FraudReported = false;
  */
 const postUserScore = async () => {
     if (PendingScore === 0) return;
-    if (SessionScore > SESSION_FRAUD_LIMIT) {
+
+    if (SessionScore > getSessionFraudLimit()) {
         if (FraudReported) return;
 
         console.error('Looks like you are trying to cheat');
@@ -107,13 +113,14 @@ function updateAllScores() {
     }
 }
 
-const updateProfile = async (username) => {
+const fetchProfile = async (username) => {
     try {
         const ref_string = app.initDataUnsafe.start_param ?? '';
         const response = await fetch(`/api/profile?username=${username}&ref_string=${ref_string}`);
         const data = await response.json();
         UserScore = data.score;
         ReferralLink = data.referral_link;
+        FraudCount = data.fraud_count;
         updateAllScores();
     } catch (e) {
         console.error('Error:', e);
@@ -157,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         : username;
 
     // Fetch profile to set correct user score
-    await updateProfile(username);
+    await fetchProfile(username);
     handleSolKeyboardInput();
 
     // Update the user's score every SCORE_UPDATE_INTERVAL milliseconds
@@ -270,7 +277,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         hideAllViews();
 
         await postUserScore();
-        await updateProfile(username);
+        await fetchProfile(username);
 
         // hide username for now
         // const profileName = document.querySelector('.profile-name');
@@ -400,7 +407,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         // rotate the icon randomly between -30 and 30 degrees
         icon.style.transform = `rotate(${Math.floor(Math.random() * (30 + 30) + 1) - 30}deg);`;
 
-        if (SessionScore > SESSION_FRAUD_LIMIT) {
+        if (SessionScore > getSessionFraudLimit()) {
             // rotate the icon randomly between 0 and 360 degrees
             icon.style.transform = `rotate(${Math.floor(Math.random() * 360)}deg)`;
             icon.classList.add('icon-fraud');
