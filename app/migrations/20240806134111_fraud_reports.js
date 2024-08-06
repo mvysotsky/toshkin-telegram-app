@@ -6,7 +6,7 @@ exports.up = async function(knex) {
     await knex.schema.createTable('fraud_reports', table => {
         table.increments('id').primary();
         table.integer('user_id').references('id').inTable('users');
-        table.json('user_data');
+        table.string('user_data');
         table.string('ip_address');
         table.string('user_agent');
         table.timestamp('created_at').defaultTo(knex.fn.now());

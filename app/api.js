@@ -48,13 +48,31 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
     }
 });
 
+const GetUserData = async (username) => {
+    return knex('users').where({username}).first();
+}
+
+/**
+ * Get fraud count for a user (only for today)
+ * @param {number} user_id
+ * @returns {Promise<{count: number}>}
+ */
+const GetFraudCount = async (user_id) => {
+    const fraud_data = await knex('fraud_reports')
+        .where({user_id})
+        .andWhere(knex.raw('DATE(fraud_reports.created_at) = CURDATE()'))
+        .first();
+
+    return fraud_data ? fraud_data.count : 0;
+}
+
 // API route to handle GET /api/profile
 router.get('/profile', async (req, res) => {
     const { username, ref_string } = req.query;
 
     try {
         // Check if the user exists in the users table
-        let user = await knex('users').where({username}).first();
+        let user = await GetUserData(username);
 
         if (!user) {
             let referred_by = null;
@@ -69,7 +87,7 @@ router.get('/profile', async (req, res) => {
             const [userID] = await knex('users').insert({ username, referred_by });
             await knex('leaderboard').insert({ user_id: userID, score: 0 });
 
-            user = await knex('users').where({username}).first();
+            user = await GetUserData(username);
 
             // Increment the referrer's score in the leaderboard table by 2500
             if (referred_by) {
@@ -84,10 +102,12 @@ router.get('/profile', async (req, res) => {
             .select('score')
             .first();
 
+        const fraud_count = await GetFraudCount(user.id);
+
         const referral_code = GetRefString(username, user.id);
         const referral_link = `https://${process.env.TELEGRAM_APP_URL}?startapp=${referral_code}`;
 
-        res.status(200).json({ username, score, referral_link });
+        res.status(200).json({ username, score, fraud_count, referral_link });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -171,13 +191,37 @@ router.post('/wallet', async (req, res) => {
 
 // API route to handle GET /api/cheater receives info about possible cheater and logs it to the console
 router.post('/fraud', async (req, res) => {
-    const { user_data } = req.body;
+    const { user_data, username } = req.body;
 
     if (!user_data) {
         return res.status(400).send('User data is required');
     }
 
     console.log(`Possible cheater detected: ${JSON.stringify(user_data)}`, `IP: ${req.ip}`, `User-Agent: ${req.headers['user-agent']}`);
+
+    // check if this user exists
+    const user = await knex('users').where({username}).first();
+
+    if (!user) {
+        return res.status(404).send('User not found');
+    }
+
+    const fraud = await knex('fraud_reports').where({user_id: user.id}).first();
+    if (fraud) {
+        // increment count
+        await knex('fraud_reports')
+            .where({ user_id: user.id })
+            .increment('count', 1);
+        return res.status(200).send('Cheater reported');
+    } else {
+        // insert data to fraud_reports table
+        await knex('fraud_reports').insert({
+            user_id: user.id,
+            user_data,
+            ip_address: req.ip,
+            user_agent: req.headers['user-agent']
+        });
+    }
 
     res.status(200).send('Cheater reported');
 });

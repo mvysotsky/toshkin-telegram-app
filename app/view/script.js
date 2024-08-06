@@ -30,7 +30,7 @@ const postUserScore = async () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({user_data})
+            body: JSON.stringify({user_data, username})
         });
 
         FraudReported = true;
