@@ -1,4 +1,3 @@
-/** @type {import('knex')} */
 const knex = require('knex')({
     client: 'mysql2',
     connection: {
@@ -7,6 +6,10 @@ const knex = require('knex')({
         user: 'root',
         password: process.env.MYSQL_ROOT_PASSWORD,
         database: process.env.MYSQL_DATABASE || 'toshkin',
+    },
+    migrations: {
+        tableName: 'migrations',
+        directory: './migrations',
     }
 });
 

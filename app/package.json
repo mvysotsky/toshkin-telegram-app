@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "DOTENV_CONFIG_PATH=../.env node -r dotenv/config server.js"
+    "start": "DOTENV_CONFIG_PATH=../.env node -r dotenv/config server.js",
+    "create-migration": "DOTENV_CONFIG_PATH=../.env node -r dotenv/config database/migration.js"
   },
   "dependencies": {
     "@solana/web3.js": "^1.95.2",

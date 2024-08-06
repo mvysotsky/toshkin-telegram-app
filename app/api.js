@@ -1,7 +1,7 @@
 const express = require('express');
 const { PublicKey } = require('@solana/web3.js');
 const router = express.Router();
-const knex = require('./database');
+const knex = require('./database/knex');
 const { GetRefString, GetRandomNumber } = require('./tools');
 const { LogRequest} = require("./middleware");
 const rateLimit = require('express-rate-limit');

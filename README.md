@@ -5,6 +5,11 @@
 2. Put correct Telegram token string to the .env file and db password
 3. `sudo docker-compose up -d`
 
+### Create database migration:
+```bash
+npm run create-migration -- <migration_name>
+```
+
 ### Setup Telegram dev environment:
 1. You need iPhone or Android Telegram Beta for [this](https://github.com/telegramdesktop/tdesktop/issues/26361)
 2. Enable Telegram test environment using Telegram Mobile:  
