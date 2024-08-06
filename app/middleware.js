@@ -8,11 +8,12 @@ const path = require('path');
 const CheckUserAgent = (req, res) => {
     const userAgent = req.headers['user-agent'] || '';
     const isMobile = /Android|iPhone|iPad|iPod/.test(userAgent);
+    const isDevMode = (process.env.ENABLE_DEV_MODE === "true") ?? false; // Read from .env
 
     if (isMobile) {
-        res.sendFile(path.join(__dirname, './view/mobile.html'));
+        res.render('mobile', { ENABLE_DEV_MODE: isDevMode });
     } else {
-        res.sendFile(path.join(__dirname, './view/desktop.html'));
+        res.render('desktop', { ENABLE_DEV_MODE: isDevMode });
     }
 };
 

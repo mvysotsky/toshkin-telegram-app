@@ -147,7 +147,10 @@ const handleSolKeyboardInput = () => {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-    if (!app.initDataUnsafe.user) {
+    const envModeInput = document.getElementById('envMode');
+    const envMode = envModeInput ? envModeInput.value : true;
+
+    if (!app.initDataUnsafe.user && !envMode) {
         document.querySelector('div.app-content.mobile').style.display = 'none';
         document.querySelector('div.app-content.not-telegram').style.display = 'flex';
         document.querySelector('div.mobile-qr').addEventListener('click',
