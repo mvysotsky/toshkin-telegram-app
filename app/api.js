@@ -199,6 +199,10 @@ router.post('/fraud', async (req, res) => {
 
     console.log(`Possible cheater detected: ${JSON.stringify(user_data)}`, `IP: ${req.ip}`, `User-Agent: ${req.headers['user-agent']}`);
 
+    if (!username) {
+        return res.status(400).send('Username is required');
+    }
+
     // check if this user exists
     const user = await knex('users').where({username}).first();
 
