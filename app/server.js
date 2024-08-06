@@ -1,4 +1,7 @@
+require('dotenv').config(); // Load environment variables
+
 const express = require('express');
+const mustacheExpress = require('mustache-express');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
@@ -12,6 +15,11 @@ const {CheckUserAgent} = require('./middleware');
 const app = express();
 const HTTP_PORT = process.env.PORT || 3000;
 const HTTPS_PORT = process.env.HTTPS_PORT || 3443;
+
+// Declaring mustache as view engine
+app.engine('mustache', mustacheExpress());
+app.set('view engine', 'mustache');
+app.set('views', path.join(__dirname, 'view')); // Custom directory for views
 
 // Middleware to parse JSON bodies
 app.use(express.json());
