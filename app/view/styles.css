@@ -136,6 +136,16 @@ div.referral-button:active {
     border-bottom: none;
 }
 
+div.wallet-display {
+    fill: white;
+    font-size: 24px;
+    stroke-width: 6px;
+    stroke: #3C0009;
+    stroke-linejoin: round;
+    paint-order: stroke;
+    text-anchor: middle;
+}
+
 div.update-address-button {
     display: flex;
     height: 68px;

@@ -12,6 +12,7 @@ let SessionScore = 0;
 let ReferralLink = '';
 let FraudReported = false;
 let FraudCount = 0;
+let UserWallet = 0;
 
 const getSessionFraudLimit = () => {
     return SESSION_FRAUD_LIMIT / Math.pow(2, FraudCount);
@@ -121,6 +122,7 @@ const fetchProfile = async (username) => {
         UserScore = data.score;
         ReferralLink = data.referral_link;
         FraudCount = data.fraud_count;
+        UserWallet = data.wallet;
         updateAllScores();
     } catch (e) {
         console.error('Error:', e);
@@ -160,6 +162,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         return;
     }
+
 
     // set #username element text to the username
     document.querySelector('#username').textContent = app.initDataUnsafe.user
@@ -298,7 +301,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const updateSolAddressButton = document.querySelector('.update-address-button');
         updateSolAddressButton.innerHTML = 'Update Address';
+
+        // Dispaly user's wallet
+        const walletDisplay = document.querySelector('.wallet-display');
+        const viewWallet = document.querySelector('.view-wallet');
+        if (UserWallet) {
+            walletDisplay.innerHTML = UserWallet.substring(0, 20) + "...";
+            walletDisplay.style.display = 'block';
+            viewWallet.style.display = 'block';
+        } else {
+            walletDisplay.style.display = 'none';
+            viewWallet.style.display = 'none';
+        }
     });
+
+    // Show wallet
+
+
 
     // Contest button logic (leaderboard)
     document.querySelector('.menu-button.contest').addEventListener('click', async function () {
