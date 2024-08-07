@@ -1,9 +1,9 @@
 const app = window.Telegram.WebApp;
 
-const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
+const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'test';
 
 const SCORE_UPDATE_INTERVAL = 2000;
-const SESSION_FRAUD_LIMIT = 2000;
+const SESSION_FRAUD_LIMIT = 3000;
 const SESSION_RESET_INTERVAL = 600000; // 10 minutes
 
 let UserScore = 0;
@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     newRow.innerHTML = `
                     <div class="table-cell">${index + 1}</div>
                     <div class="table-cell">${item.username}</div>
-                    <div class="table-cell">2500</div>
+                    <div class="table-cell">${item.score}</div>
                 `;
                     referralTableBody.appendChild(newRow);
                 });
