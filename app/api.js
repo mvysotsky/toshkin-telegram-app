@@ -3,6 +3,7 @@ const { PublicKey } = require('@solana/web3.js');
 const router = express.Router();
 const knex = require('./database/knex');
 const { GetRefString, GetRandomNumber } = require('./tools');
+const { GetUserData, GetFraudData, GetFraudCount } = require('./database/users');
 const { LogRequest} = require("./middleware");
 const rateLimit = require('express-rate-limit');
 
@@ -47,24 +48,6 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-
-const GetUserData = async (username) => {
-    return knex('users').where({username}).first();
-}
-
-/**
- * Get fraud count for a user (only for today)
- * @param {number} user_id
- * @returns {Promise<{count: number}>}
- */
-const GetFraudCount = async (user_id) => {
-    const fraud_data = await knex('fraud_reports')
-        .where({user_id})
-        .andWhere(knex.raw('DATE(fraud_reports.created_at) = CURDATE()'))
-        .first();
-
-    return fraud_data ? fraud_data.count : 0;
-}
 
 // API route to handle GET /api/profile
 router.get('/profile', async (req, res) => {
@@ -210,11 +193,12 @@ router.post('/fraud', async (req, res) => {
         return res.status(404).send('User not found');
     }
 
-    const fraud = await knex('fraud_reports').where({user_id: user.id}).first();
-    if (fraud) {
+    const fraud_data = await GetFraudData(user.id);
+
+    if (fraud_data) {
         // increment count
         await knex('fraud_reports')
-            .where({ user_id: user.id })
+            .where({ id: fraud_data.id })
             .increment('count', 1);
         return res.status(200).send('Cheater reported');
     } else {

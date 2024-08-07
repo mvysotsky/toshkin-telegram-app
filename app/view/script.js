@@ -3,7 +3,7 @@ const app = window.Telegram.WebApp;
 const username = app.initDataUnsafe.user ? app.initDataUnsafe.user.username : 'unknown';
 
 const SCORE_UPDATE_INTERVAL = 2000;
-const SESSION_FRAUD_LIMIT = 2000;
+const SESSION_FRAUD_LIMIT = 20;
 const SESSION_RESET_INTERVAL = 600000; // 10 minutes
 
 let UserScore = 0;
