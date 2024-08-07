@@ -303,13 +303,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         updateSolAddressButton.innerHTML = 'Update Address';
 
         // Dispaly user's wallet
+        const walletView = document.querySelector('.wallet-view');
         const walletDisplay = document.querySelector('.wallet-display');
-        const viewWallet = document.querySelector('.view-wallet');
+
         if (UserWallet) {
             walletDisplay.innerHTML = UserWallet.substring(0, 20) + "...";
-            viewWallet.style.display = 'block';
+            walletView.style.display = 'block';
         } else {
-            viewWallet.style.display = 'none';
+            walletView.style.display = 'none';
         }
     });
 
