@@ -307,10 +307,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         const viewWallet = document.querySelector('.view-wallet');
         if (UserWallet) {
             walletDisplay.innerHTML = UserWallet.substring(0, 20) + "...";
-            walletDisplay.style.display = 'block';
             viewWallet.style.display = 'block';
         } else {
-            walletDisplay.style.display = 'none';
             viewWallet.style.display = 'none';
         }
     });
