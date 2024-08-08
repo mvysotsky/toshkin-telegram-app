@@ -6,8 +6,10 @@ const config = require('./config');
 const { GetRefString, GetRandomNumber } = require('./tools');
 const { GetUserData, GetFraudData, GetFraudCount } = require('./database/users');
 const referrals = require('./database/referrals');
+const leaderboard = require('./database/leaderboard');
 const { LogRequest} = require("./middleware");
 const rateLimit = require('express-rate-limit');
+const users = require("./database/users");
 
 // Create a rate limiter middleware (1 request per second)
 const addRequestLimiter = rateLimit({
@@ -36,21 +38,7 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
             return res.status(404).send('User not found');
         }
 
-        // Increment the user's score in the leaderboard table by the specified amount
-        await knex('leaderboard')
-            .where({ user_id: user.id })
-            .increment('score', score);
-
-        // Check if user has referred_by and increment the referrer's score in the leaderboard and in referrals table
-        if (user.referred_by) {
-            const bonus_score = Math.round(score * config.SCORE_REFERRAL_PERCENTAGE);
-
-            await knex('leaderboard')
-                .where({ user_id: user.referred_by })
-                .increment('score', bonus_score);
-
-            await referrals.AddReferralScore(user.id, user.referred_by, bonus_score);
-        }
+        await leaderboard.AddScore(user.id, score, user.referred_by);
 
         res.status(200).send('Score updated');
     } catch (error) {
@@ -84,12 +72,12 @@ router.get('/profile', async (req, res) => {
 
             // Increment the referrer's score in the leaderboard
             if (referred_by) {
-                await knex('leaderboard')
-                    .where({ user_id: referred_by })
-                    .increment('score', config.SCORE_REFERRAL_BONUS);
-
                 // Insert the referral data into the referrals table
                 await referrals.CreateReferral(userID, referred_by, config.SCORE_REFERRAL_BONUS);
+                const referral_user = users.GetUserData(referred_by);
+
+                // Increment the referrer's score in the leaderboard + its referrer and so on
+                await leaderboard.AddScore(referred_by, config.SCORE_REFERRAL_BONUS, referral_user.referred_by);
             }
         }
 

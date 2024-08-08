@@ -9,6 +9,10 @@ const GetUserData = async (username) => {
     return knex('users').where({username}).first();
 }
 
+const GetUserDataById = async (id) => {
+    return knex('users').where({id}).first();
+}
+
 /**
  * Get fraud data for a user (only for today)
  * @param {number} user_id
@@ -33,4 +37,4 @@ const GetFraudCount = async (user_id) => {
 }
 
 
-module.exports = { GetUserData, GetFraudData, GetFraudCount };
+module.exports = { GetUserData, GetFraudData, GetFraudCount, GetUserDataById };
