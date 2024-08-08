@@ -301,13 +301,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         const updateSolAddressButton = document.querySelector('.update-address-button');
         updateSolAddressButton.innerHTML = 'Update Address';
 
-        // Dispaly user's wallet
+        // Display user's wallet
+        const solInputEl = document.querySelector('[data-sol-address-input]');
         const walletView = document.querySelector('.wallet-view');
         const walletDisplay = document.querySelector('.wallet-display');
 
         if (UserWallet) {
             walletDisplay.innerHTML = UserWallet.substring(0, 20) + "...";
             walletView.style.display = 'block';
+            solInputEl.style.display = 'none';
         } else {
             walletView.style.display = 'none';
         }
@@ -368,6 +370,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Update SOL address
     document.querySelector('.update-address-button').addEventListener('click', function (e) {
         const solInputEl = document.querySelector('[data-sol-address-input]');
+        const walletView = document.querySelector('.wallet-view');
+
 
         function showError(errorType) {
             const texts = {
@@ -381,28 +385,34 @@ document.addEventListener("DOMContentLoaded", async function () {
             }, 2000);
         }
 
-        if (solInputEl.value && solInputEl.value.match(/^[A-Za-z0-9]{32,44}$/)) {
-            fetch('/api/wallet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({username: username, wallet: solInputEl.value})
-            })
-                .then((response) => {
-                    if (response.status === 200) {
-                        e.target.innerHTML = 'Saved!';
-                    } else if (response.status === 400) {
-                        showError('invalid');
-                    } else {
-                        showError('oops');
-                    }
+
+        if (solInputEl.style.display !== 'none') {
+            if (solInputEl.value && solInputEl.value.match(/^[A-Za-z0-9]{32,44}$/)) {
+                fetch('/api/wallet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({username: username, wallet: solInputEl.value})
                 })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+                    .then((response) => {
+                        if (response.status === 200) {
+                            e.target.innerHTML = 'Saved!';
+                        } else if (response.status === 400) {
+                            showError('invalid');
+                        } else {
+                            showError('oops');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                showError('invalid');
+            }
         } else {
-            showError('invalid');
+            solInputEl.style.display = 'block';
+            walletView.style.display = 'none';
         }
     });
 
