@@ -2,12 +2,12 @@ const express = require('express');
 const { PublicKey } = require('@solana/web3.js');
 const router = express.Router();
 const knex = require('./database/knex');
+const config = require('./config');
 const { GetRefString, GetRandomNumber } = require('./tools');
+const { GetUserData, GetFraudData, GetFraudCount } = require('./database/users');
+const referrals = require('./database/referrals');
 const { LogRequest} = require("./middleware");
 const rateLimit = require('express-rate-limit');
-
-const SCORE_FRAUD_LIMIT_LOW = 50;
-const SCORE_FRAUD_LIMIT_HIGH = 30;
 
 // Create a rate limiter middleware (1 request per second)
 const addRequestLimiter = rateLimit({
@@ -24,7 +24,7 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
         return res.status(400).send('Invalid score');
     }
 
-    if (score > GetRandomNumber(SCORE_FRAUD_LIMIT_LOW, SCORE_FRAUD_LIMIT_HIGH)) {
+    if (score > GetRandomNumber(config.SCORE_FRAUD_LIMIT_LOW, config.SCORE_FRAUD_LIMIT_HIGH)) {
         return res.status(400).send('Looks like you are trying to cheat');
     }
 
@@ -41,30 +41,23 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
             .where({ user_id: user.id })
             .increment('score', score);
 
+        // Check if user has referred_by and increment the referrer's score in the leaderboard and in referrals table
+        if (user.referred_by) {
+            const bonus_score = Math.round(score * config.SCORE_REFERRAL_PERCENTAGE);
+
+            await knex('leaderboard')
+                .where({ user_id: user.referred_by })
+                .increment('score', bonus_score);
+
+            await referrals.AddReferralScore(user.id, user.referred_by, bonus_score);
+        }
+
         res.status(200).send('Score updated');
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });
-
-const GetUserData = async (username) => {
-    return knex('users').where({username}).first();
-}
-
-/**
- * Get fraud count for a user (only for today)
- * @param {number} user_id
- * @returns {Promise<{count: number}>}
- */
-const GetFraudCount = async (user_id) => {
-    const fraud_data = await knex('fraud_reports')
-        .where({user_id})
-        .andWhere(knex.raw('DATE(fraud_reports.created_at) = CURDATE()'))
-        .first();
-
-    return fraud_data ? fraud_data.count : 0;
-}
 
 // API route to handle GET /api/profile
 router.get('/profile', async (req, res) => {
@@ -89,11 +82,14 @@ router.get('/profile', async (req, res) => {
 
             user = await GetUserData(username);
 
-            // Increment the referrer's score in the leaderboard table by 2500
+            // Increment the referrer's score in the leaderboard
             if (referred_by) {
                 await knex('leaderboard')
                     .where({ user_id: referred_by })
-                    .increment('score', 2500);
+                    .increment('score', config.SCORE_REFERRAL_BONUS);
+
+                // Insert the referral data into the referrals table
+                await referrals.CreateReferral(userID, referred_by, config.SCORE_REFERRAL_BONUS);
             }
         }
 
@@ -146,21 +142,28 @@ router.get('/leaderboard', async (req, res) => {
 // API route to handle GET /api/referred
 router.get('/referred', async (req, res) => {
     const { username } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
 
     try {
         // Check if the user exists in the users table
         const user = await knex('users').where({username}).first();
 
-        if (user) {
-            // Get all users where the referred_by column matches the user's ID
-            const referred = await knex('users')
-                .where({ referred_by: user.id })
-                .select('username', 'created_at');
-
-            res.status(200).json(referred);
-        } else {
-            res.status(404).send('User not found');
+        if (!user) {
+            return res.status(404).send('User not found');
         }
+
+        // Get the top positions from the referrals table sorted by bonus in descending order
+        const referrals = await knex('referrals')
+            .join('users', 'referrals.user_id', 'users.id')
+            .select('users.username', 'referrals.bonus as score')
+            .orderBy('referrals.bonus', 'desc')
+            .where('referrals.referred_by', user.id)
+            .limit(limit)
+            .offset(offset);
+
+        res.status(200).json(referrals);
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -219,11 +222,12 @@ router.post('/fraud', async (req, res) => {
         return res.status(404).send('User not found');
     }
 
-    const fraud = await knex('fraud_reports').where({user_id: user.id}).first();
-    if (fraud) {
+    const fraud_data = await GetFraudData(user.id);
+
+    if (fraud_data) {
         // increment count
         await knex('fraud_reports')
-            .where({ user_id: user.id })
+            .where({ id: fraud_data.id })
             .increment('count', 1);
         return res.status(200).send('Cheater reported');
     } else {
