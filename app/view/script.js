@@ -12,7 +12,7 @@ let SessionScore = 0;
 let ReferralLink = '';
 let FraudReported = false;
 let FraudCount = 0;
-let UserWallet = 0;
+let UserWalletShort = 0;
 
 const getSessionFraudLimit = () => {
     return SESSION_FRAUD_LIMIT / Math.pow(2, FraudCount);
@@ -114,6 +114,19 @@ function updateAllScores() {
     }
 }
 
+function toggleWalletView(walletDisplay = false) {
+    const solInputEl = document.querySelector('[data-sol-address-input]');
+    const walletView = document.getElementById('wallet-view');
+
+    if (solInputEl.style.display === 'none' && !walletDisplay) {
+        solInputEl.style.display = 'block';
+        walletView.style.display = 'none';
+    } else {
+        solInputEl.style.display = 'none';
+        walletView.style.display = 'block';
+    }
+}
+
 const fetchProfile = async (username) => {
     try {
         const ref_string = app.initDataUnsafe.start_param ?? '';
@@ -122,7 +135,7 @@ const fetchProfile = async (username) => {
         UserScore = data.score;
         ReferralLink = data.referral_link;
         FraudCount = data.fraud_count;
-        UserWallet = data.wallet;
+        UserWalletShort = data.wallet_short;
         updateAllScores();
     } catch (e) {
         console.error('Error:', e);
@@ -298,26 +311,18 @@ document.addEventListener("DOMContentLoaded", async function () {
         referralButton.innerHTML = 'Copy referral link';
         referralButton.style.display = 'flex';
 
+        // Display user's wallet
+        const walletView = document.getElementById('wallet-view');
+        const solInputEl = document.querySelector('[data-sol-address-input]');
+
+        if (UserWalletShort) {
+            walletView.textContent = UserWalletShort + "...";
+            toggleWalletView(true);
+        }
+
         const updateSolAddressButton = document.querySelector('.update-address-button');
         updateSolAddressButton.innerHTML = 'Update Address';
-
-        // Display user's wallet
-        const solInputEl = document.querySelector('[data-sol-address-input]');
-        const walletView = document.querySelector('.wallet-view');
-        const walletDisplay = document.querySelector('.wallet-display');
-
-        if (UserWallet) {
-            walletDisplay.innerHTML = UserWallet.substring(0, 20) + "...";
-            walletView.style.display = 'block';
-            solInputEl.style.display = 'none';
-        } else {
-            walletView.style.display = 'none';
-        }
     });
-
-    // Show wallet
-
-
 
     // Contest button logic (leaderboard)
     document.querySelector('.menu-button.contest').addEventListener('click', async function () {
@@ -370,7 +375,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Update SOL address
     document.querySelector('.update-address-button').addEventListener('click', function (e) {
         const solInputEl = document.querySelector('[data-sol-address-input]');
-        const walletView = document.querySelector('.wallet-view');
+        const walletView = document.getElementById('wallet-view');
 
 
         function showError(errorType) {
@@ -382,7 +387,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             e.target.innerHTML = texts[errorType];
             setTimeout(() => {
                 e.target.innerHTML = texts['default'];
-            }, 2000);
+            }, 3000);
         }
 
 
@@ -398,6 +403,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                     .then((response) => {
                         if (response.status === 200) {
                             e.target.innerHTML = 'Saved!';
+                            walletView.textContent = solInputEl.value.substring(0, 20) + '...';
+                            toggleWalletView();
                         } else if (response.status === 400) {
                             showError('invalid');
                         } else {
@@ -411,8 +418,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 showError('invalid');
             }
         } else {
-            solInputEl.style.display = 'block';
-            walletView.style.display = 'none';
+            showError('default');
+            toggleWalletView();
         }
     });
 

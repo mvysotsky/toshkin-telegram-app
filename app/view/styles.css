@@ -83,6 +83,22 @@ div.flex-column {
     align-items: center;
 }
 
+#wallet-view {
+    width: 275px;
+    height: 24px;
+    font-family: "Concert One", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 100%;
+    text-align: center;
+    color: #FFFFFF;
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+
+}
+
 .view {
     display: flex;
     width: 100%;
@@ -135,41 +151,6 @@ div.referral-button:active {
     border-color: transparent;
     border-bottom: none;
 }
-
-div.wallet-display {
-
-    /* m2iP6U83aosPLqPCiKyuZrLQGt2iBFLuq6oYP94QJhc */
-
-    width: 275px;
-    height: 24px;
-    font-family: "Concert One", sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 24px;
-    line-height: 100%;
-    /* identical to box height, or 24px */
-    text-align: center;
-
-    color: #FFFFFF;
-
-
-    /* Inside auto layout */
-    flex: none;
-    order: 2;
-    flex-grow: 0;
-
-    /* extra
-    fill: white;
-    font-size: 24px;
-    stroke-width: 6px;
-    stroke: #3C0009;
-    stroke-linejoin: round;
-    paint-order: stroke;
-    text-anchor: middle;
-    */
-
-}
-
 
 div.update-address-button {
     display: flex;
