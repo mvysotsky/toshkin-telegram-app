@@ -91,12 +91,19 @@ router.get('/profile', async (req, res) => {
         const referral_code = GetRefString(username, user.id);
         const referral_link = `https://${process.env.TELEGRAM_APP_URL}?startapp=${referral_code}`;
 
-        res.status(200).json({ username, score, fraud_count, referral_link });
+        // Retrieve the wallet data
+        const { wallet } = await knex('users')
+            .where({ id: user.id })
+            .select('wallet')
+            .first();
+
+        res.status(200).json({ username, score, fraud_count, referral_link, wallet });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 // API route to handle GET /api/leaderboard
 router.get('/leaderboard', async (req, res) => {
@@ -179,6 +186,8 @@ router.post('/wallet', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
 
 // API route to handle GET /api/cheater receives info about possible cheater and logs it to the console
 router.post('/fraud', async (req, res) => {
