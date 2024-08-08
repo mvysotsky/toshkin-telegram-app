@@ -176,10 +176,12 @@ router.post('/wallet', async (req, res) => {
         if (!PublicKey.isOnCurve(wallet)) {
             return res.status(400).send('Invalid Solana address!');
         }
-
-        // Check if the user exists in the users table
+        const existing_wallet = await knex('users').where({wallet}).select('id').first();
         const user = await knex('users').where({username}).first();
 
+        if (existing_wallet && user.id !== existing_wallet.id) {
+            return res.status(409).send('Wallet address already exists');
+        }
         if (user) {
             // Update the user's wallet address in the users table
             await knex('users')
