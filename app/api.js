@@ -81,6 +81,9 @@ router.get('/profile', async (req, res) => {
             }
         }
 
+        const { wallet } = user;
+        const wallet_short = wallet.substring(0, 20);
+
         const { score } = await knex('leaderboard')
             .where({ user_id: user.id })
             .select('score')
@@ -91,13 +94,7 @@ router.get('/profile', async (req, res) => {
         const referral_code = GetRefString(username, user.id);
         const referral_link = `https://${process.env.TELEGRAM_APP_URL}?startapp=${referral_code}`;
 
-        // Retrieve the wallet data
-        const { wallet } = await knex('users')
-            .where({ id: user.id })
-            .select('wallet')
-            .first();
-
-        res.status(200).json({ username, score, fraud_count, referral_link, wallet });
+        res.status(200).json({ username, score, fraud_count, referral_link, wallet_short });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
