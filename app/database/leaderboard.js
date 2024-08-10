@@ -1,6 +1,7 @@
 const users = require('./users');
 const config = require('../config');
 const knex = require('./knex');
+const referrals = require('./referrals');
 
 const AddScore = async (user_id, score, referred_by) => {
     if (score === 0) return;
@@ -20,7 +21,8 @@ const AddScore = async (user_id, score, referred_by) => {
             return;
         }
 
-        await AddScore(referred_by, bonus_score, referral_user.referred_by);
+        void referrals.AddReferralScore(user_id, referred_by, bonus_score);
+        void AddScore(referred_by, bonus_score, referral_user.referred_by);
     }
 }
 
