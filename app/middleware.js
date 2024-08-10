@@ -10,6 +10,10 @@ const CheckUserAgent = (req, res) => {
     const isMobile = /Android|iPhone|iPad|iPod/.test(userAgent);
     const isDevMode = (process.env.ENABLE_DEV_MODE === "true") ?? false; // Read from .env
 
+    if (process.env.SEASON_CLOSED === "true") {
+        return res.render('closed');
+    }
+
     if (isMobile) {
         res.render('mobile', { ENABLE_DEV_MODE: isDevMode });
     } else {

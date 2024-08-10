@@ -29,6 +29,11 @@ body {
     line-height: 100%;
 }
 
+body.closed-season {
+    background-image: url('img/season-closed.jpg');
+    background-size: cover;
+}
+
 h1 {
     font-size: 32px;
     white-space: nowrap;
