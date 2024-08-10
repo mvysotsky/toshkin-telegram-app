@@ -13,6 +13,8 @@ let ReferralLink = '';
 let FraudReported = false;
 let FraudCount = 0;
 let UserWalletShort = 0;
+let UserEnergy = 0;
+let MaxUserEnergy = 0;
 
 const getSessionFraudLimit = () => {
     return SESSION_FRAUD_LIMIT / Math.pow(2, FraudCount);
@@ -49,6 +51,13 @@ const postUserScore = async () => {
     PendingScore = 0;
 
     try {
+        await fetch('/api/consume_energy', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json'
+           },
+            body: JSON.stringify({username, energy: score_to_post})
+        });
         await fetch('/api/add_score', {
             method: 'POST',
             headers: {
@@ -127,6 +136,26 @@ function toggleWalletView(walletDisplay = false) {
     }
 }
 
+// Visualizing user's energy bar
+function updateEnergyBar() {
+    const energyBar = document.querySelector('.energy-bar');
+    const energyPercentage = Math.min((UserEnergy / MaxUserEnergy) * 100, 100);
+    // Update the width of the energy bar
+    energyBar.style.width = `${energyPercentage}%`;
+}
+
+const fetchEnergy = async (username) => {
+    try {
+        const response = await fetch(`/api/energy?username=${username}`);
+        const data = await response.json();
+        UserEnergy = data.energy;
+        MaxUserEnergy = data.max_energy;
+        updateEnergyBar();
+    } catch (e) {
+        console.error('Error', e);
+    }
+}
+    
 const fetchProfile = async (username) => {
     try {
         const ref_string = app.initDataUnsafe.start_param ?? '';
@@ -136,6 +165,7 @@ const fetchProfile = async (username) => {
         ReferralLink = data.referral_link;
         FraudCount = data.fraud_count;
         UserWalletShort = data.wallet_short;
+        await fetchEnergy(username);
         updateAllScores();
     } catch (e) {
         console.error('Error:', e);
@@ -235,6 +265,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         views.forEach(view => {
             view.style.display = 'none';
         });
+        document.querySelector('.energy-bar-container').style.display = 'none';
     }
 
     // Launch to the Moon button click event listener
@@ -286,6 +317,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         hideAllViews();
         document.querySelector('.tap-zone').style.display = 'flex';
         document.querySelector('.tap-score').style.display = 'flex';
+        document.querySelector('.energy-bar-container').style.display = 'flex';
         document.querySelector('.launch-button').style.display = 'flex';
         document.querySelector('.referral-button').style.display = 'none';
     });
@@ -296,7 +328,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         await postUserScore();
         await fetchProfile(username);
-
         // hide username for now
         // const profileName = document.querySelector('.profile-name');
         // profileName.style.display = 'flex';
@@ -313,7 +344,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Display user's wallet
         const walletView = document.getElementById('wallet-view');
-        const solInputEl = document.querySelector('[data-sol-address-input]');
 
         if (UserWalletShort) {
             walletView.textContent = UserWalletShort + "...";
@@ -428,7 +458,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         UserScore++;
         PendingScore++;
         SessionScore++;
+        UserEnergy--;
         updateAllScores();
+        updateEnergyBar();
 
         /** @type {HTMLElement} */
         const tapZone = event.currentTarget;

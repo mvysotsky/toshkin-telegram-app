@@ -6,6 +6,7 @@ const config = require('./config');
 const { GetRefString, GetRandomNumber } = require('./tools');
 const { GetUserData, GetFraudData, GetFraudCount } = require('./database/users');
 const referrals = require('./database/referrals');
+const user_energy = require('./database/user_energy');
 const leaderboard = require('./database/leaderboard');
 const { LogRequest} = require("./middleware");
 const rateLimit = require('express-rate-limit');
@@ -47,6 +48,54 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
     }
 });
 
+router.post('/consume_energy', addRequestLimiter, LogRequest, async (req, res) => {
+    const { username, energy } = req.body;
+
+    if (!energy || energy < 0) {
+        return res.status(400).send('Invalid energy amount');
+    }
+
+    if (energy > GetRandomNumber(config.SCORE_FRAUD_LIMIT_LOW, config.SCORE_FRAUD_LIMIT_HIGH)) {
+        return res.status(400).send('Looks like you are trying to cheat');
+    }
+
+    try {
+        // Check if the user exists in the users table
+        const user = await knex('users').where({username}).first();
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        await user_energy.ConsumeEnergy(user.id, energy);
+
+        res.status(200).send('Energy updated');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+//
+router.get('/energy', async (req, res) => {
+    const { username } = req.query;
+    try {
+        const user = await knex('users').where({username}).first();
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        const { energy, max_energy } = await user_energy.GetEnergyData(user.id);
+        res.status(200).json({ energy, max_energy });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+
+    }
+});
+
+
+
 // API route to handle GET /api/profile
 router.get('/profile', async (req, res) => {
     const { username, ref_string } = req.query;
@@ -67,6 +116,7 @@ router.get('/profile', async (req, res) => {
 
             const [userID] = await knex('users').insert({ username, referred_by });
             await knex('leaderboard').insert({ user_id: userID, score: 0 });
+            await knex('user_energy').insert({ user_id: userID, energy: config.ENERGY_MAXIMUM_VALUE, max_energy: config.ENERGY_MAXIMUM_VALUE });
 
             user = await GetUserData(username);
 
@@ -80,10 +130,11 @@ router.get('/profile', async (req, res) => {
                 await leaderboard.AddScore(referred_by, config.SCORE_REFERRAL_BONUS, referral_user.referred_by);
             }
         }
-
+        let wallet_short = 0;
         const { wallet } = user;
-        const wallet_short = wallet.substring(0, 20);
-
+        if (wallet) {
+            wallet_short = wallet.substring(0, 20);
+        }
         const { score } = await knex('leaderboard')
             .where({ user_id: user.id })
             .select('score')
