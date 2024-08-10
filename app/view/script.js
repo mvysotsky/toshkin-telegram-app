@@ -383,6 +383,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 default: 'Update Address',
                 invalid: 'Invalid Address!',
                 oops: 'Whoopsie, try later',
+                duplicate: 'Wallet address already exists'
             }
             e.target.innerHTML = texts[errorType];
             setTimeout(() => {
@@ -407,6 +408,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                             toggleWalletView();
                         } else if (response.status === 400) {
                             showError('invalid');
+                        } else if (response.status === 409) {
+                            showError('duplicate');
                         } else {
                             showError('oops');
                         }
