@@ -69,6 +69,13 @@ async function startServer() {
     } catch (e) {
         // Could not load SSL certificate and key. Skipping https server.
     }
+    // trying starting cron process
+    try {
+        const energyRegeneration = require('./cron/energyRegeneration');
+        console.log('cron energyRegeneration launched successfully');
+    } catch (e) {
+        console.log('cron was not loaded');
+    }
 }
 
 startServer()

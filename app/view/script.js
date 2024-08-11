@@ -51,13 +51,6 @@ const postUserScore = async () => {
     PendingScore = 0;
 
     try {
-        await fetch('/api/consume_energy', {
-           method: 'POST',
-           headers: {
-               'Content-Type': 'application/json'
-           },
-            body: JSON.stringify({username, energy: score_to_post})
-        });
         await fetch('/api/add_score', {
             method: 'POST',
             headers: {

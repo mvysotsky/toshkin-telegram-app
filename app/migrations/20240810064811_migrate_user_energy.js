@@ -9,6 +9,7 @@ exports.up = async function(knex) {
         await knex('user_energy').insert({
             user_id: user.id,
             energy: 5000, // Initial energy value for all users
+            last_energy_regen: knex.fn.now(),
             created_at: knex.fn.now(),
             updated_at: knex.fn.now()
         });

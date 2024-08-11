@@ -40,7 +40,7 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
         }
 
         await leaderboard.AddScore(user.id, score, user.referred_by);
-
+        await user_energy.ConsumeEnergy(user.id, score);
         res.status(200).send('Score updated');
     } catch (error) {
         console.error(error);
@@ -48,35 +48,8 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
     }
 });
 
-router.post('/consume_energy', addRequestLimiter, LogRequest, async (req, res) => {
-    const { username, energy } = req.body;
 
-    if (!energy || energy < 0) {
-        return res.status(400).send('Invalid energy amount');
-    }
-
-    if (energy > GetRandomNumber(config.SCORE_FRAUD_LIMIT_LOW, config.SCORE_FRAUD_LIMIT_HIGH)) {
-        return res.status(400).send('Looks like you are trying to cheat');
-    }
-
-    try {
-        // Check if the user exists in the users table
-        const user = await knex('users').where({username}).first();
-
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
-        await user_energy.ConsumeEnergy(user.id, energy);
-
-        res.status(200).send('Energy updated');
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-//
+// API route to retrieve Current user's Energy and Max Energy values
 router.get('/energy', async (req, res) => {
     const { username } = req.query;
     try {
@@ -90,10 +63,8 @@ router.get('/energy', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
-
     }
 });
-
 
 
 // API route to handle GET /api/profile
@@ -130,11 +101,8 @@ router.get('/profile', async (req, res) => {
                 await leaderboard.AddScore(referred_by, config.SCORE_REFERRAL_BONUS, referral_user.referred_by);
             }
         }
-        let wallet_short = 0;
-        const { wallet } = user;
-        if (wallet) {
-            wallet_short = wallet.substring(0, 20);
-        }
+        const wallet_short = user.wallet?.substring(0, 20) || 0;
+
         const { score } = await knex('leaderboard')
             .where({ user_id: user.id })
             .select('score')
