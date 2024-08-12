@@ -387,6 +387,18 @@ div.tap-zone {
     transition: width 0.3s;
 }
 
+#energy-bar-timer {
+    height: 24px;
+    font-family: "Concert One", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
 
 @keyframes fadeOut {

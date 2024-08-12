@@ -58,8 +58,8 @@ router.get('/energy', async (req, res) => {
         if (!user) {
             return res.status(404).send('User not found');
         }
-        const { energy, max_energy } = await user_energy.GetEnergyData(user.id);
-        res.status(200).json({ energy, max_energy });
+        const { energy, max_energy, time_to_regen } = await user_energy.GetEnergyData(user.id);
+        res.status(200).json({ energy, max_energy, time_to_regen });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');

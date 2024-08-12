@@ -1,5 +1,5 @@
 const users = require('./users');
-// const config = require('../config');
+const config = require('../config');
 const knex = require('./knex');
 
 const AddEnergy = async (user_id, energy) => {
@@ -20,10 +20,12 @@ const ConsumeEnergy = async (user_id, energy) => {
 }
 
 const GetEnergyData = async (user_id) => {
-    return knex('user_energy')
-        .where({ user_id })
-        .select('energy', 'max_energy')
+    const data = await knex('user_energy')
+        .where({user_id})
+        .select('energy', 'max_energy', 'last_energy_regen')
         .first();
+    const time_to_regen = config.ENERGY_REGEN_INTERVAL - (Date.now() - new Date(data.last_energy_regen));
+    return {...data, time_to_regen}
 }
 
 module.exports = { AddEnergy, ConsumeEnergy, GetEnergyData };

@@ -25,13 +25,10 @@ async function regenerateEnergy() {
     }
 }
 
-module.exports = { regenerateEnergy };
-
 // Schedule the cron job to run every minute
 cron.schedule('*/15 * * * * *', async () => {
     try {
         await regenerateEnergy();
-        console.log('Energy regeneration executed successfully.');
     } catch (error) {
         console.error('Error regenerating energy:', error);
     }

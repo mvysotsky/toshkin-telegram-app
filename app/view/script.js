@@ -15,6 +15,7 @@ let FraudCount = 0;
 let UserWalletShort = 0;
 let UserEnergy = 0;
 let MaxUserEnergy = 0;
+let TimeToRegen = 0;
 
 const getSessionFraudLimit = () => {
     return SESSION_FRAUD_LIMIT / Math.pow(2, FraudCount);
@@ -137,13 +138,32 @@ function updateEnergyBar() {
     energyBar.style.width = `${energyPercentage}%`;
 }
 
+function updateEnergyCounter() {
+    const energyBarTimer = document.getElementById('energy-bar-timer');
+    const timeRemaining = Math.max(0, TimeToRegen);
+
+    // Convert the difference to seconds, minutes, or any unit you need
+    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    const formattedString = `Energy ${String(UserEnergy)}/${MaxUserEnergy} ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    energyBarTimer.style.display = 'flex';
+    energyBarTimer.innerHTML = formattedString;
+    TimeToRegen -= 1000;
+}
+
 const fetchEnergy = async (username) => {
     try {
         const response = await fetch(`/api/energy?username=${username}`);
         const data = await response.json();
         UserEnergy = data.energy;
         MaxUserEnergy = data.max_energy;
+        TimeToRegen = data.time_to_regen;
         updateEnergyBar();
+        if (UserEnergy < 5000) {
+            setInterval(updateEnergyCounter, 1000);
+        } else {
+            updateEnergyCounter();
+        }
     } catch (e) {
         console.error('Error', e);
     }
