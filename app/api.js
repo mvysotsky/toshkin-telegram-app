@@ -6,6 +6,7 @@ const config = require('./config');
 const { GetRefString, GetRandomNumber } = require('./tools');
 const { GetUserData, GetFraudData, GetFraudCount } = require('./database/users');
 const referrals = require('./database/referrals');
+const user_energy = require('./database/user_energy');
 const leaderboard = require('./database/leaderboard');
 const { LogRequest} = require("./middleware");
 const rateLimit = require('express-rate-limit');
@@ -39,13 +40,32 @@ router.post('/add_score', addRequestLimiter, LogRequest, async (req, res) => {
         }
 
         await leaderboard.AddScore(user.id, score, user.referred_by);
-
+        await user_energy.ConsumeEnergy(user.id, score);
         res.status(200).send('Score updated');
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });
+
+
+// API route to retrieve Current user's Energy and Max Energy values
+router.get('/energy', async (req, res) => {
+    const { username } = req.query;
+    try {
+        const user = await knex('users').where({username}).first();
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        const { energy, max_energy, time_to_regen } = await user_energy.GetEnergyData(user.id);
+        res.status(200).json({ energy, max_energy, time_to_regen });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 // API route to handle GET /api/profile
 router.get('/profile', async (req, res) => {
@@ -67,6 +87,7 @@ router.get('/profile', async (req, res) => {
 
             const [userID] = await knex('users').insert({ username, referred_by });
             await knex('leaderboard').insert({ user_id: userID, score: 0 });
+            await knex('user_energy').insert({ user_id: userID, energy: config.ENERGY_MAXIMUM_VALUE, max_energy: config.ENERGY_MAXIMUM_VALUE });
 
             user = await GetUserData(username);
 
@@ -80,9 +101,7 @@ router.get('/profile', async (req, res) => {
                 await leaderboard.AddScore(referred_by, config.SCORE_REFERRAL_BONUS, referral_user.referred_by);
             }
         }
-
-        const { wallet } = user;
-        const wallet_short = wallet.substring(0, 20);
+        const wallet_short = user.wallet?.substring(0, 20) || 0;
 
         const { score } = await knex('leaderboard')
             .where({ user_id: user.id })
