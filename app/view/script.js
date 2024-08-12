@@ -138,7 +138,7 @@ function updateEnergyBar() {
     energyBar.style.width = `${energyPercentage}%`;
 }
 
-function updateEnergyCounter(full = false) {
+function updateEnergyCounter() {
     const energyBarTimer = document.getElementById('energy-bar-timer');
     const timeRemaining = Math.max(0, TimeToRegen);
 
